@@ -21,3 +21,19 @@
     * 해당 Row의 변환 값을 의미하는 Column 값이 NULL이라면 변환 중임을 의미
 
     * 해당 Row의 변환 값을 의미하는 Column 값이 JSON이라면 변환이 완료된 결과물을 의미
+
+## Database
+
+### Naming
+
+* converted_link
+
+    * 특정 Youtube Link에 대한 Table
+
+    * Column 1 : id
+
+    * Column 2 : link (Youtube Link)
+
+        * Unique Key로 지정해야 중복된 Youtube Link가 없다.
+
+    * Column 3 : result (Result of Conversion)
