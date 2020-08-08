@@ -1,5 +1,11 @@
 const express = require('express');
 
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize(process.env.DEV_DATABASE_URL);
+
 const router = express.Router();
 
 // AI Model로부터 변환된 JSON을 전달받아서 DB에 저장하는 API
