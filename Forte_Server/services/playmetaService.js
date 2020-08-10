@@ -1,26 +1,29 @@
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
-
-const Sequelize = require('sequelize');
 const { Converted_Links } = require('../models/Converted_Links');
-const sequelize = new Sequelize(process.env.DEV_DATABASE_URL);
 
 exports.find = async (link) => {
-    // sync()가 어디에 들어가야 하는지? issue
-    // await sequelize.sync();
+    // sync()가 어디에 들어가야 하는지? issue 2
+    // await Converted_Links.sync();
     const find = await Converted_Links.findAll({
         attributes: ['result'],
         where: {
             link: link
         }
     });
-    console.log("Update Data: ", JSON.stringify(find, null, 2));
+    console.log("Check Data: ", JSON.stringify(find, null, 2));
     return find;
-}
+};
 
 exports.store = async (link) => {
-    // await sequelize.sync();
+    // await Converted_Links.sync();
     const data = Converted_Links.create({ link: link });
     await data.save();
     console.log("Save Data: ", data.link);
-}
+};
+
+exports.update = async (link, result) => {
+    // await Converted_Link.sync();
+    await Converted_Links.update({ result: result }, {
+        where: { link: link }
+    });
+    console.log("Update Data: ", result)
+};
