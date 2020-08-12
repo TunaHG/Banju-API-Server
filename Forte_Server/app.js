@@ -1,15 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const config = require('./config/index');
+const config = require('./config/config');
 
 const musicreg = require('./api/v1/musicreg');
 const playmeta = require('./api/v1/playmeta');
 
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize(config.default.databaseurl);
-
 const app = express();
-const port = config.default.port;
+const port = config.port;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

@@ -1,8 +1,7 @@
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../config/.env') });
+const config = require('../config/config');
 
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize(process.env.DEV_DATABASE_URL);
+const sequelize = new Sequelize(config.databaseurl);
 
 const Converted_Links = sequelize.define('Converted_Links', {
     link: {

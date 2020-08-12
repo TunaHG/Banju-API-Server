@@ -15,8 +15,8 @@ router.post('/', (req, res) => {
     console.log("Update Success in /playmeta POST");
 });
 // Update Result with CLient's participation
-router.put();
+//router.put();
 // Delete Result What Client want to delete
-router.delete();
+//router.delete();
 
 module.exports = router;

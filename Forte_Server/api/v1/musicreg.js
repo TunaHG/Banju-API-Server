@@ -1,7 +1,7 @@
 const express = require('express');
 
 // config file load
-const config = require('../../config/index');
+const config = require('../../config/config');
 
 // AWS SQS Setting
 const AWS = require('aws-sdk');
@@ -18,13 +18,13 @@ router.post('/', (req, res) => {
   let link = req.body.link;
   let msg = {
       MessageBody: JSON.stringify({ 'url': link }),
-      QueueUrl: config.default.sqsurl
+      QueueUrl: config.sqsurl
   };
 
   // Test using Postman, send (key: link, value: 2qtKMC5wzkU) in Body's x-www-form-urlencoded
   console.log(msg.MessageBody);
 
-  // 이 부분이 Services 계층으로 넘어가야 하는지? issue 
+  // 이 부분이 Services 계층으로 넘어가야 하는지? issue #1
   SQS.sendMessage(msg, (err, data) => {
     if (err) {
       console.log("Error", err);
