@@ -6,11 +6,11 @@ const Sequelize = require('sequelize');
 const sequelize = new Sequelize(config.databaseurl);
 
 // load other model for foreign key
-const { User } = require('./User');
-const { Banju } = require('./Banju');
+const { Users } = require('./Users');
+const { Banjus } = require('./Banjus');
 
 // Set model practice
-const Practice = sequelize.define('Practice', {
+const Practices = sequelize.define('Practices', {
     id: {
         type: Sequelize.NUMBER,
         primaryKey: true
@@ -20,7 +20,7 @@ const Practice = sequelize.define('Practice', {
         type: Sequelize.NUMBER,
         // foreign key setting
         references: {
-            model: User,
+            model: Users,
             key: 'id',
             deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
         }
@@ -30,7 +30,7 @@ const Practice = sequelize.define('Practice', {
         type: Sequelize.NUMBER,
         // foreign key setting
         references: {
-            model: Banju,
+            model: Banjus,
             key: 'id',
             deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
         }
@@ -53,4 +53,4 @@ const Practice = sequelize.define('Practice', {
 });
 
 // export
-exports.Practice = Practice;
+exports.Practices = Practices;
