@@ -1,9 +1,7 @@
-const { Converted_Links } = require('../models/Converted_Links');
+const { Banju } = require('../models/Banju');
 
 exports.find = async (link) => {
-    // sync()가 어디에 들어가야 하는지? issue #2
-    // await Converted_Links.sync();
-    const find = await Converted_Links.findAll({
+    const find = await Banju.findAll({
         attributes: ['result'],
         where: {
             link: link
@@ -14,15 +12,13 @@ exports.find = async (link) => {
 };
 
 exports.store = async (link) => {
-    // await Converted_Links.sync();
-    const data = Converted_Links.create({ link: link });
-    await data.save();
+    const data = await Banju.create({ link: link });
+    data.save();
     console.log("Save Data: ", data.link);
 };
 
 exports.update = async (link, result) => {
-    // await Converted_Link.sync();
-    await Converted_Links.update({ result: result }, {
+    await Banju.update({ result: result }, {
         where: { link: link }
     });
     console.log("Update Data: ", result)
