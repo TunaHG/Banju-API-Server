@@ -15,7 +15,7 @@ exports.sendToSQS = async (link) => {
         QueueUrl: config.sqsurl
     };
     
-    SQS.sendMessage(msg, (err, data) => {
+    SQS.sendMessage(msg, async (err, data) => {
         if(err) {
             console.log("SQS Send Error: ", err);
             return ;
@@ -27,4 +27,8 @@ exports.sendToSQS = async (link) => {
             console.log("DB Save Data: ", savedata.link);
         }
     });
+
+    // const savedata = await Banjus.create({ link: link });
+    // savedata.save();
+    // console.log("DB Save Data: ", savedata.link);
 }
