@@ -1,25 +1,28 @@
-const { Banju } = require('../models/Banju');
+const { Banjus } = require('../models/Banjus');
 
+// * after midterm, change to function using id
+
+// DB: Select function using link
 exports.find = async (link) => {
-    const find = await Banju.findAll({
-        attributes: ['result'],
+    const find = await Banjus.findAll({
+        attributes: ['content'],
         where: {
+            is_youtube: true,
             link: link
         }
     });
-    console.log("Check Data: ", JSON.stringify(find, null, 2));
-    return find;
+    result = JSON.stringify(find, null, 2);
+    console.log("Check Data: ", result);
+    return result;
 };
 
-exports.store = async (link) => {
-    const data = await Banju.create({ link: link });
-    data.save();
-    console.log("Save Data: ", data.link);
-};
-
-exports.update = async (link, result) => {
-    await Banju.update({ result: result }, {
-        where: { link: link }
+// DB: Update function using link, content (youtube)
+exports.update = async (link, content) => {
+    await Banju.update({ content: content }, {
+        where: {
+            is_youtube: true, 
+            link: link 
+        }
     });
     console.log("Update Data: ", result)
 };
