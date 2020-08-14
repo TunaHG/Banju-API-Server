@@ -8,8 +8,9 @@ const sequelize = new Sequelize(config.databaseurl);
 // Set model Users
 const Users = sequelize.define('Users', {
     id: {
-        type: Sequelize.NUMBER,
-        primaryKey: true
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
     // social login, your login id
     email: Sequelize.STRING,

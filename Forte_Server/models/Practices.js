@@ -12,12 +12,13 @@ const { Banjus } = require('./Banjus');
 // Set model practice
 const Practices = sequelize.define('Practices', {
     id: {
-        type: Sequelize.NUMBER,
-        primaryKey: true
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
     // Who create this practice data
     user_id: {
-        type: Sequelize.NUMBER,
+        type: Sequelize.INTEGER,
         // foreign key setting
         references: {
             model: Users,
@@ -27,7 +28,7 @@ const Practices = sequelize.define('Practices', {
     },
     // What banju do you practice
     banju_id: {
-        type: Sequelize.NUMBER,
+        type: Sequelize.INTEGER,
         // foreign key setting
         references: {
             model: Banjus,
@@ -42,7 +43,7 @@ const Practices = sequelize.define('Practices', {
     // Feedback: Often wrong chord progression
     hard_chord_progression: Sequelize.STRING,
     // Feedback: Practice Accuracy Compared to the original Banju
-    accuracy: Sequelize.NUMBER,
+    accuracy: Sequelize.INTEGER,
 }, {
     // Table name does not change
     freezeTableName: true,

@@ -11,15 +11,20 @@ const sequelize = new Sequelize(config.databaseurl);
 // Set Model Banju
 const Banjus = sequelize.define('Banjus', {
     id: {
-        type: Sequelize.NUMBER,
-        primaryKey: true
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
     // youtube link(true) or wav file(false)
-    is_youtube: Sequelize.BOOLEAN,
+    is_youtube: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
+    },
     // is_youtube is true >> link isn't null
     // is_youtube is false >> link is null
     link: {
-        type: Sequelize.STRING//,
+        type: Sequelize.STRING,
+        defaultValue: null,
         // unique key? 
         //unique: true
     },
@@ -27,7 +32,7 @@ const Banjus = sequelize.define('Banjus', {
     content: Sequelize.JSON,
     // Who Create this Banju?
     user_id: {
-        type: Sequelize.NUMBER,
+        type: Sequelize.INTEGER,
         references: {
             model: Users,
             key: 'id',
@@ -35,17 +40,17 @@ const Banjus = sequelize.define('Banjus', {
         }
     },
     // this id derived from parent id
-    parent_banju_id: Sequelize.NUMBER,
+    parent_banju_id: Sequelize.INTEGER,
     // this banju's original id (AI model's )
-    original_banju_id: Sequelize.NUMBER,
+    original_banju_id: Sequelize.INTEGER,
     included_chord: Sequelize.STRING,
     // Often Wrong Chord
     hard_chord: Sequelize.STRING,
     // Often Wrong Chord Progression
     hard_chord_progression: Sequelize.STRING,
     // Practice 
-    practice_start_cnt: Sequelize.NUMBER,
-    practice_end_cnt: Sequelize.NUMBER
+    practice_start_cnt: Sequelize.INTEGER,
+    practice_end_cnt: Sequelize.INTEGER
 }, {
     // Table name does not change
     freezeTableName: true,
