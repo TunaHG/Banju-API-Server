@@ -5,6 +5,9 @@ const config = require('./config/config');
 const musicreg = require('./api/v1/musicreg');
 const playmeta = require('./api/v1/playmeta');
 
+const sequelize = require('./models').sequelize;
+sequelize.sync();
+
 const app = express();
 const port = config.port;
 
