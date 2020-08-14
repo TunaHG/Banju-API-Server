@@ -1,10 +1,10 @@
-const { Banjus } = require('../models/Banjus');
+const models = require('../models');
 
 // * after midterm, change to function using id
 
 // DB: Select function using link
 exports.find = async (link) => {
-    const find = await Banjus.findAll({
+    const find = await models.Banjus.findAll({
         attributes: ['content'],
         where: {
             is_youtube: true,
@@ -18,7 +18,7 @@ exports.find = async (link) => {
 
 // DB: Update function using link, content (youtube)
 exports.update = async (link, content) => {
-    await Banju.update({ content: content }, {
+    await models.Banjus.update({ content: content }, {
         where: {
             is_youtube: true, 
             link: link 

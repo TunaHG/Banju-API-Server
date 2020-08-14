@@ -11,7 +11,7 @@ router.get('/:link', (req, res) => {
 });
 // Save Data to DB, about Convereted Result from AI Model
 router.post('/', (req, res) => {
-    update(req.body.link, req.body.result);
+    update(req.body.link, req.body.content);
     console.log("Update Success in /playmeta POST");
 });
 // Update Result with CLient's participation
