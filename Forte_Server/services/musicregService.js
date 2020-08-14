@@ -7,7 +7,7 @@ AWS.config.update({ region: 'ap-northeast-2' });
 const SQS = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 // load DB model
-const { Banjus } = require('../models/Banjus');
+const models = require('../models');
 
 exports.sendToSQS = async (link) => {
     let msg = {
@@ -22,7 +22,7 @@ exports.sendToSQS = async (link) => {
         } else {
             console.log("SQS Send Success: ", data.MessageId);
             // Database save
-            const savedata = await Banjus.create({ link: link });
+            const savedata = await models.Banjus.create({ link: link });
             savedata.save();
             console.log("DB Save Data: ", savedata.link);
         }
