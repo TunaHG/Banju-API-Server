@@ -5,8 +5,19 @@ const config = require('./config/config');
 const musicreg = require('./api/v1/musicreg');
 const playmeta = require('./api/v1/playmeta');
 
-const sequelize = require('./models').sequelize;
-sequelize.sync();
+// Sequelize Setting
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize(config.databaseurl);
+const models = require('./models');
+
+models.sequelize.sync({ })
+.then(() => {
+    console.log("DB sync Success");
+})
+.catch((err) => {
+    console.log('DB sync Failed');
+    console.log("Error: ", err);
+});
 
 const app = express();
 const port = config.port;
