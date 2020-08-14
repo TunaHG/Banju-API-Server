@@ -1,6 +1,3 @@
-// load User model for foreign key
-const Users = require('./Users');
-
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('Banjus', {
         id: {
@@ -27,7 +24,7 @@ module.exports = (sequelize, Sequelize) => {
         user_id: {
             type: Sequelize.INTEGER,
             references: {
-                model: Users,
+                model: 'Users',
                 key: 'id',
                 deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
             }

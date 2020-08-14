@@ -1,7 +1,3 @@
-// load other model for foreign key
-const Users = require('./Users');
-const Banjus = require('./Banjus');
-
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('Practices', {
         id: {
@@ -14,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             // foreign key setting
             references: {
-                model: Users,
+                model: 'Users',
                 key: 'id',
                 deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
             }
@@ -24,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             // foreign key setting
             references: {
-                model: Banjus,
+                model: 'Banjus',
                 key: 'id',
                 deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
             }
