@@ -24,5 +24,5 @@ exports.update = async (link, content) => {
             link: link 
         }
     });
-    console.log("Update Data: ", result)
+    console.log("Update Data: ", content);
 };
