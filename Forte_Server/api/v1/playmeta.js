@@ -8,12 +8,12 @@ router.get('/:link', (req, res) => {
     let resultjson = {};
     find(req.params.link).then((content) => {
         if(content == null) {
+            resultjson.status = "working";
+            console.log("Conversion working.");
+        } else {
             resultjson.content = content;
             resultjson.status = "finished";
             console.log("Conversion finish. result: ", resultjson);
-        } else {
-            resultjson.status = "working";
-            console.log("Conversion working.");
         }
     }).catch((err) => {
         resultjson.status = "error"
