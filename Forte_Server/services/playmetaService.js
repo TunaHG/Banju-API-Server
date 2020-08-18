@@ -11,8 +11,9 @@ exports.find = async (link) => {
             link: link
         }
     });
+    
     content = JSON.parse(find.content);
-    console.log("Check Data: ", content);
+    console.log("Check Data: ", find.content);
     return content;
 };
 
