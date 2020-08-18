@@ -5,9 +5,21 @@ const router = express.Router();
 
 // Get Converted Result for Client
 router.get('/:link', (req, res) => {
-    const result = find(req.params.link);
-    console.log("/playmeta GET result: ", result);
-    res.send(result);
+    let resultjson = {};
+    find(req.params.link).then((content) => {
+        if(content == null) {
+            resultjson.content = content;
+            resultjson.status = "finished";
+            console.log("Conversion finish. result: ", resultjson);
+        } else {
+            resultjson.status = "working";
+            console.log("Conversion working.");
+        }
+    }).catch((err) => {
+        resultjson.status = "error"
+        console.log("Never been requested. Error: ", err);
+    });
+    res.send(resultjson);
 });
 // Save Data to DB, about Convereted Result from AI Model
 router.post('/', (req, res) => {

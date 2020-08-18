@@ -4,16 +4,16 @@ const models = require('../models');
 
 // DB: Select function using link
 exports.find = async (link) => {
-    const find = await models.Banjus.findAll({
+    const find = await models.Banjus.findOne({
         attributes: ['content'],
         where: {
             is_youtube: true,
             link: link
         }
     });
-    result = JSON.stringify(find, null, 2);
-    console.log("Check Data: ", result);
-    return result;
+    content = JSON.parse(find.content);
+    console.log("Check Data: ", content);
+    return content;
 };
 
 // DB: Update function using link, content (youtube)
