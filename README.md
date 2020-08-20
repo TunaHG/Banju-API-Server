@@ -1,29 +1,62 @@
-# Forte BackEnd Repository
+# :musical_keyboard: Banju
+***AI기반 피아노 코드반주 학습 서비스***  
+> Backend Develop Repository
 
-## API
-### Naming
-#### Chord Conversion
+**Software Maestro 11기 TEAM forte 🎼김성환 유인성 김하균**
 
-* /musicreg (가칭) 
-    * Client로부터 Youtube 링크를 받고, 변환을 진행하는 AI Model 이전의 메시지 큐로 전달하는 API
-* /musicreg/status (가칭)
-    * Client에게 현재 변환 상태를 알려줄 API
-    * 해당 Youtube 링크에 대한 Row가 없다면 변환이 요청된 적이 없음을 의미
-    * 해당 Row의 변환 값을 의미하는 Column 값이 NULL이라면 변환 중임을 의미
-    * 해당 Row의 변환 값을 의미하는 Column 값이 JSON이라면 변환이 완료된 결과물을 의미
+## 🔎 Features in Backend Server
+- Client's Banju data creation request
+- Client's Banju data get from db request
+- AI model's Banju data save to db request
 
-#### Chord
-* /playmeta
-    * GET : AI Model로부터 변환이 완료된 형태인 JSON을 전달받는 API
-    * POST : Client에게 변환된 값을 전달해주는 API
-    * PUT : Client가 참여하여 Chord를 수정하는 API
-    * DELETE : 관리자가 PlayMeta를 삭제하는 API
+## 🔨 How to run  
+### Docker Execution
+```bash
+$> docker pull asdf0185/forte_server:v1.2
+$> docker run -p 3000:3000 asdf0185/forte_server:v1.2
+```  
 
-## Database
-### Naming
-* converted_link
-    * 특정 Youtube Link에 대한 Table
-    * Column 1 : link (Youtube Link)
-        * 변환요청된 Youtube Link, URI뒤의 해시값만 입력(?)
-    * Column 2 : result (Result of Conversion)
-        * JSON Data
+### Native Execution  
+**Preparing Enviroment**
+AWS Credentials Setting
+```bash
+$> sudo vim ~/.aws/credentials
+$> ln -s ~/.aws/credentials /mnt/c/Users/{Username}/.aws
+```
+
+Credentials file
+```bash
+[default]
+aws_access_key_id = {AWS ACCESS KEY}
+aws_secret_access_key = {AWS SECRET ACCESS KEY}
+```
+
+**Run**
+```bash
+$> npm install
+$> npm start (or node app.js)
+```  
+
+## 📁 Directory Structure
+```bash
+.
+├── api  # API folder
+│   └── v1  # version 1
+│       ├── musicreg.js  # Client's banju creation request
+│       └── playmeta.js  # Client's banju selection request, AI model's banju save request
+├── config  # Configuration folder
+│   └── config.js  # configuration with dotenv
+├── models  # Database models folder
+│   ├── index.js  # export all models
+│   ├── Banjus.js  # Table of Chord Sheetmusic data
+│   ├── Practices.js  # Table of user's practice data
+│   └── Users.js  # Table of user data
+├── services  # Logic of api
+│   ├── musicregService.js  # music registration function
+│   └── playmetaService.js  # find, update banju function
+├── Dockerfile  # Dockerized project
+├── README.md  # README file
+├── package.json
+├── package-lock.json
+└── app.js
+```
