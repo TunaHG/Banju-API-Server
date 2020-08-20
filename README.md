@@ -9,6 +9,18 @@
 - Client's Banju data get from db request
 - AI model's Banju data save to db request
 
+## API Reference
+- `/musicreg`
+    - POST `/` : Client requests AI Model to convert to banju data(JSON Convention)
+        - The 'link' must be included in the body.
+        - 'link' is a hash value representing a video in Youtube URL
+        ex) '2qtKMC5wzkU' in 'https://www.youtube.com/watch?v=2qtKMC5wzkU'
+- `/playmeta`
+    - GET `/:link` : Request Banju data for the youtube link given as params
+    - POST `/` : Request to save the banju data by AI Model
+        - 'link' and 'content' must be included in the body
+        - {"link" : "hash of youtube", "content" : .banju}
+
 ## 🔨 How to run  
 ### Docker Execution
 ```bash
