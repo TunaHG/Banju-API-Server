@@ -16,7 +16,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             defaultValue: null,
             // unique key? 
-            //unique: true
+            unique: true
         },
         // Converted Data from AI Model
         content: Sequelize.JSON,
