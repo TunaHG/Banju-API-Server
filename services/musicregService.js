@@ -3,7 +3,7 @@ const config = require('../config/config');
 
 // AWS SQS Setting
 const AWS = require('aws-sdk');
-AWS.config.update({ region: 'ap-northeast-2' });
+AWS.config.update({ region: 'ap-northeast-2', accessKeyId: config.awsaccesskey, secretAccessKey: config.awssecretaccesskey });
 const SQS = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 // load DB model
