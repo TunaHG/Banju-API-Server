@@ -27,6 +27,7 @@ router.post('/', (req, res) => {
     // if(req.body.err)
     update(req.body.link, req.body.content);
     console.log("Update Success in /playmeta POST");
+    res.send(JSON.parse('{"msg":"success"}'));
 });
 // Update Result with CLient's participation
 //router.put();

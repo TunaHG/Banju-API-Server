@@ -11,7 +11,12 @@ router.post('/', (req, res) => {
   let link = req.body.link;
 
   // send to SQS Service
-  sendToSQS(link);
+  const sqsdata = sendToSQS(link);
+  const resjson = {};
+  resjson.data = sqsdata;
+  console.log("Result: ", sqsdata);
+  res.json(resjson);
+  // res.send(JSON.parse('{"msg":"success"}'));
 });
 // router.put();
 // router.delete();
