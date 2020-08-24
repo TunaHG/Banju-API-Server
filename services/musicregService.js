@@ -9,30 +9,37 @@ const SQS = new AWS.SQS({ apiVersion: '2012-11-05' });
 // load DB model
 const models = require('../models');
 
-exports.sendToSQS = (link, err) => {
+exports.sendToSQS = async (link) => {
     // Set SQS msg Setting
     let msg = {
         MessageBody: JSON.stringify({ 'url': link }),
         QueueUrl: config.sqsurl
     };
-    
-    // send message to SQS queue
-    SQS.sendMessage(msg, async (err, data) => {
-        // SQS Error Handling (Not Finished)
-        if(err) {
-            console.log("SQS Send Error: ", err);
-            return 'SQSErr'
-        }
+
+    let result = 'Success';
+
+    await SQS.sendMessage(msg).promise()
+    .then((data) => {
         console.log("SQS Send Success: ", data.MessageId);
-        // Database save
-        const savedata = await models.Banjus.create({ link: link });
-        savedata.save();
-        // Database Error Handling (Not finished)
-        if(err) {
-            console.log("DB Save Error: ", err);
-            return 'DBErr'
-        }
-        console.log("DB Save Data: ", savedata.link);
-        return 'Success'
+    })
+    .catch((err) => {
+        console.log("SQS Send Error: ", err);
+        result = 'SQSErr';
     });
+
+    if(result === 'SQSErr'){
+        return result;
+    }
+
+    await models.Banjus.create({ link: link })
+        .then((banjus) => {
+            banjus.save();
+        })
+        .catch((err) => {
+            console.log("DB Save Error: ", err);
+            result = 'DBErr';
+            console.log("Result: ", result);
+        });
+
+    return result;
 }
