@@ -10,13 +10,15 @@ const SQS = new AWS.SQS({ apiVersion: '2012-11-05' });
 const models = require('../models');
 
 exports.sendToSQS = (link, err) => {
+    // Set SQS msg Setting
     let msg = {
         MessageBody: JSON.stringify({ 'url': link }),
         QueueUrl: config.sqsurl
     };
     
+    // send message to SQS queue
     SQS.sendMessage(msg, async (err, data) => {
-        // throw err;
+        // SQS Error Handling (Not Finished)
         if(err) {
             console.log("SQS Send Error: ", err);
             return 'SQSErr'
@@ -25,6 +27,7 @@ exports.sendToSQS = (link, err) => {
         // Database save
         const savedata = await models.Banjus.create({ link: link });
         savedata.save();
+        // Database Error Handling (Not finished)
         if(err) {
             console.log("DB Save Error: ", err);
             return 'DBErr'
@@ -32,15 +35,4 @@ exports.sendToSQS = (link, err) => {
         console.log("DB Save Data: ", savedata.link);
         return 'Success'
     });
-
-    if(err) {
-        console.log("SQS Error", err);
-        return 'SQSErr';
-    }
-
-    return 'Success';
-
-    // const savedata = await Banjus.create({ link: link });
-    // savedata.save();
-    // console.log("DB Save Data: ", savedata.link);
 }
