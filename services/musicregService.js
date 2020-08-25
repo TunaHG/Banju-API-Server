@@ -12,7 +12,7 @@ const models = require('../models');
 exports.sendToSQS = async (link) => {
     // Set SQS msg Setting
     let msg = {
-        MessageBody: JSON.stringify({ 'url': link }),
+        MessageBody: JSON.stringify({ 'link': link }),
         QueueUrl: config.sqsurl
     };
 
