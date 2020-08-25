@@ -12,14 +12,14 @@ exports.find = async (link) => {
         }
     });
     
-    content = JSON.parse(find.content);
+    content = find.content;
     console.log("Check Data: ", find.content);
     return content;
 };
 
 // DB: Update function using link, content (youtube)
 exports.update = async (link, content) => {
-    const update = await models.Banjus.update({ content: JSON.parse(content) }, {
+    const update = await models.Banjus.update({ content: content }, {
         where: {
             is_youtube: true, 
             link: link 
