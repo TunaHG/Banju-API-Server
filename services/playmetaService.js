@@ -19,11 +19,12 @@ exports.find = async (link) => {
 
 // DB: Update function using link, content (youtube)
 exports.update = async (link, content) => {
-    await models.Banjus.update({ content: content }, {
+    const update = await models.Banjus.update({ content: JSON.parse(content) }, {
         where: {
             is_youtube: true, 
             link: link 
         }
     });
     console.log("Update Data: ", content);
+    return update;
 };

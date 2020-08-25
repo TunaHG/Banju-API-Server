@@ -29,9 +29,20 @@ router.get('/:link', (req, res) => {
 // Save Data to DB, about Convereted Result from AI Model
 router.post('/', (req, res) => {
     // if(req.body.err)
-    update(req.body.link, req.body.content);
-    console.log("Update Success in /playmeta POST");
-    res.send(JSON.parse('{"msg":"success"}'));
+    update(req.body.link, req.body.content)
+    .then((update) => {
+        console.log("Update result: ", update);
+        if(update === 1){
+            console.log("Update Success in link ", req.body.link, "'s content to ", req.body.content);
+            res.send(JSON.parse('{"msg":"success"}'));
+        }
+        console.log("Update Failed in link '", req.body.link, "' is not exist");
+        res.send(JSON.parse('{"msg":"fail"}'));
+    })
+    .catch((err) => {
+        console.log("Update Error: ", err);
+        res.send(JSON.parse('{"msg":"Error"}'));
+    });
 });
 
 module.exports = router;
