@@ -11,6 +11,8 @@ router.post('/', async (req, res) => {
 
   // send to SQS Service
   const sqsdata = await sendToSQS(link);
+  
+  // Response
   const resjson = {};
   resjson.data = sqsdata;
   console.log("SQS Function Result: ", sqsdata);
