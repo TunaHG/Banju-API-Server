@@ -5,15 +5,16 @@ const { sendToSQS } = require('../../services/musicregService');
 
 const router = express.Router();
 
-// router.get();
 // Send Message to AI Model from Client
 router.post('/', (req, res) => {
   let link = req.body.link;
 
   // send to SQS Service
-  sendToSQS(link);
+  const sqsdata = sendToSQS(link);
+  const resjson = {};
+  resjson.data = sqsdata;
+  console.log("Result: ", sqsdata);
+  res.json(resjson);
 });
-// router.put();
-// router.delete();
 
 module.exports = router;

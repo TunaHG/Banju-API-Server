@@ -6,7 +6,9 @@ const router = express.Router();
 // Get Converted Result for Client
 router.get('/:link', (req, res) => {
     let resultjson = {};
-    find(req.params.link).then((content) => {
+    // SQL Select query
+    find(req.params.link)
+    .then((content) => {
         if(content == null) {
             resultjson.status = "working";
             console.log("Conversion working.");
@@ -15,7 +17,9 @@ router.get('/:link', (req, res) => {
             resultjson.status = "finished";
             console.log("Conversion finish. result: ", resultjson);
         }
-    }).catch((err) => {
+    })
+    // Error Handling
+    .catch((err) => {
         resultjson.status = "error"
         console.log("Never been requested. Error: ", err);
     });
@@ -27,10 +31,7 @@ router.post('/', (req, res) => {
     // if(req.body.err)
     update(req.body.link, req.body.content);
     console.log("Update Success in /playmeta POST");
+    res.send(JSON.parse('{"msg":"success"}'));
 });
-// Update Result with CLient's participation
-//router.put();
-// Delete Result What Client want to delete
-//router.delete();
 
 module.exports = router;
