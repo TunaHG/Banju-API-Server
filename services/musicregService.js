@@ -22,11 +22,11 @@ exports.sendToSQS = async (link) => {
     // Send message to SQS queue function
     await SQS.sendMessage(msg).promise()
     .then((data) => {
-        console.log("SQS Send Success: ", data.MessageId);
+        console.log("SQS Send Success");
     })
     // SQS Error Handling
     .catch((err) => {
-        console.log("SQS Send Error: ", err);
+        console.log("SQS Send Error");
         result = 'SQSErr';
     });
 
@@ -39,12 +39,12 @@ exports.sendToSQS = async (link) => {
     await models.Banjus.create({ link: link })
         .then((banjus) => {
             banjus.save();
+            console.log("DB Save Success");
         })
         // DB Error Handling
         .catch((err) => {
-            console.log("DB Save Error: ", err);
+            console.log("DB Save Error");
             result = 'DBErr';
-            console.log("Result: ", result);
         });
 
     return result;

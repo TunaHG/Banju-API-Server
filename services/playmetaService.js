@@ -13,7 +13,7 @@ exports.find = async (link) => {
     });
     
     content = find.content;
-    console.log("Check Data: ", find.content);
+    console.log("SQL Select query Success");
     return content;
 };
 
@@ -25,6 +25,6 @@ exports.update = async (link, content) => {
             link: link 
         }
     });
-    console.log("Update Data: ", content);
+    console.log("SQL Update query Success");
     return update;
 };

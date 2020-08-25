@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
   // Response
   const resjson = {};
   resjson.data = sqsdata;
-  console.log("SQS Function Result: ", sqsdata);
+  console.log("POST /musicreg Result: ", sqsdata);
   res.send(resjson);
 });
 
