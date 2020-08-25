@@ -17,13 +17,14 @@ router.get('/:link', (req, res) => {
             resultjson.status = "finished";
             console.log("Conversion finish. result: ", resultjson);
         }
+        res.send(resultjson);
     })
     // Error Handling
     .catch((err) => {
         resultjson.status = "error"
         console.log("Never been requested. Error: ", err);
+        res.send(resultjson);
     });
-    res.send(resultjson);
 });
 
 // Save Data to DB, about Convereted Result from AI Model
