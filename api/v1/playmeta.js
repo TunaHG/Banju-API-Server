@@ -15,23 +15,37 @@ router.get('/:link', (req, res) => {
         } else {
             resultjson.content = content;
             resultjson.status = "finished";
-            console.log("Conversion finish. result: ", resultjson);
+            console.log("Conversion finish.");
         }
+        res.send(resultjson);
     })
     // Error Handling
     .catch((err) => {
         resultjson.status = "error"
-        console.log("Never been requested. Error: ", err);
+        console.log("Never been requested");
+        res.send(resultjson);
     });
-    res.send(resultjson);
 });
 
 // Save Data to DB, about Convereted Result from AI Model
 router.post('/', (req, res) => {
-    // if(req.body.err)
-    update(req.body.link, req.body.content);
-    console.log("Update Success in /playmeta POST");
-    res.send(JSON.parse('{"msg":"success"}'));
+    update(req.body.link, req.body.content)
+    .then((update) => {
+        console.log("number of row updated: ", update);
+        // if update == 0, Means that no row has been updated
+        if(update === 0){
+            console.log("POST /playmeta Failed. there are no updated rows");
+            res.send(JSON.parse('{"msg":"fail"}'));
+        }
+        // update success
+        console.log("POST /playmeta Success");
+        res.send(JSON.parse('{"msg":"success"}'));
+    })
+    // DB Update query Error Handling
+    .catch((err) => {
+        console.log("POST /playmeta Failed. update query error");
+        res.send(JSON.parse('{"msg":"Error"}'));
+    });
 });
 
 module.exports = router;

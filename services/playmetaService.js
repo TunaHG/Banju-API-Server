@@ -12,18 +12,19 @@ exports.find = async (link) => {
         }
     });
     
-    content = JSON.parse(find.content);
-    console.log("Check Data: ", find.content);
+    content = find.content;
+    console.log("SQL Select query Success");
     return content;
 };
 
 // DB: Update function using link, content (youtube)
 exports.update = async (link, content) => {
-    await models.Banjus.update({ content: content }, {
+    const update = await models.Banjus.update({ content: content }, {
         where: {
             is_youtube: true, 
             link: link 
         }
     });
-    console.log("Update Data: ", content);
+    console.log("SQL Update query Success");
+    return update;
 };
