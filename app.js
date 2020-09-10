@@ -8,7 +8,7 @@ const playmeta = require('./api/v1/playmeta');
 // Sequelize Setting
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize(config.databaseurl);
-const models = require('./models');
+const models = require('./db/models');
 
 models.sequelize.sync({ })
 .then(() => {

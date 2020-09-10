@@ -7,7 +7,7 @@ AWS.config.update({ region: 'ap-northeast-2', accessKeyId: config.awsaccesskey, 
 const SQS = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 // load DB model
-const models = require('../models');
+const models = require('../db/models');
 
 exports.sendToSQS = async (link) => {
     // Set SQS msg Setting
