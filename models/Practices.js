@@ -1,29 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('Practices', {
         id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
-        },
-        // Who create this practice data
-        user_id: {
-            type: Sequelize.INTEGER,
-            // foreign key setting
-            references: {
-                model: 'Users',
-                key: 'id',
-                deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
-            }
-        },
-        // What banju do you practice
-        banju_id: {
-            type: Sequelize.INTEGER,
-            // foreign key setting
-            references: {
-                model: 'Banjus',
-                key: 'id',
-                deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
-            }
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV1,
+            primaryKey: true
         },
         // practice data (Similar AI Model's Converted Data)
         user_banju: Sequelize.JSON,
@@ -39,6 +19,8 @@ module.exports = (sequelize, Sequelize) => {
         // createdAt, updatedAt create!
         timestamps: true,
         // updatedAt does not created
-        updatedAt: false
+        updatedAt: false,
+        // apply snake case on foreign key
+        underscored: true
     });
 };
