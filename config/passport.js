@@ -1,5 +1,7 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const KakaoStrategy = require('passport-kakao').Strategy;
+// const AppleStrategy = require('').Strategy;
 const config = require('./config');
 
 module.exports = () => {
@@ -18,4 +20,14 @@ module.exports = () => {
     }, (accessToken, refreshToken, profile, cb) => {
         return cb(null, profile);
     }));
+
+    passport.use(new KakaoStrategy({
+        clientID: config.kakaoclientid,
+        clientSecret: config.kakaoclientsecret,
+        callbackURL: 'http://localhost:3000/kakao/oauth'
+    }, (accessToken, refreshToken, profile, cb) => {
+        return cb(null, profile);
+    }));
+
+    // passport.use(new AppleStrategy({}, {}));
 }
