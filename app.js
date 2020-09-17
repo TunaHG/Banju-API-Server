@@ -10,7 +10,7 @@ const Sequelize = require('sequelize');
 const sequelize = new Sequelize(config.databaseurl);
 const models = require('./models');
 
-models.sequelize.sync({ })
+models.sequelize.sync({ force: true })
 .then(() => {
     console.log("DB sync Success");
 })
