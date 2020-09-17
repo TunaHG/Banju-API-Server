@@ -24,4 +24,4 @@ router.get('/fail', (req, res) => {
     res.send('login failed');
 });
 
-module.exports = router;    
+module.exports = router;
