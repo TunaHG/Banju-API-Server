@@ -8,9 +8,11 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true
         },
         // social login, your login id
-        email: Sequelize.STRING,
-        // login password
-        password: Sequelize.STRING,
+        email: {
+            type: Sequelize.STRING,
+            unique: true,
+            allowNull: false
+        },
         // display name to other users
         nickname: Sequelize.STRING,
         // if you want display your phone number
