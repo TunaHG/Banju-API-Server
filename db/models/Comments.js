@@ -1,25 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('Comments', {
         id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
-        },
-        user_id: {
-            type: Sequelize.INTEGER,
-            references: {
-                model: 'Users',
-                key: 'id',
-                deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
-            }
-        },
-        post_id: {
-            type: Sequelize.INTEGER,
-            references: {
-                model: 'Posts',
-                key: 'id',
-                deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
-            }
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV1,
+            primaryKey: true
         },
         content: Sequelize.STRING,
     }, {

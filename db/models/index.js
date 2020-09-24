@@ -37,6 +37,16 @@ db.Users.hasMany(db.Practices, { foreignKey: 'user_id', sourceKey: 'id' });
 db.Practices.belongsTo(db.Users, { foreignKey: 'user_id', targetKey: 'id' });
 db.Banjus.hasMany(db.Practices, { foreignKey: 'banju_id', sourceKey: 'id' });
 db.Practices.belongsTo(db.Banjus, { foreignKey: 'banju_id', targetKey: 'id' });
+db.Users.hasMany(db.Posts, { foreignKey: 'user_id', sourceKey: 'id' });
+db.Posts.belongsTo(db.Users, { foreignKey: 'user_id', sourceKey: 'id' });
+db.Users.hasMany(db.Comments, { foreignKey: 'user_id', sourceKey: 'id' });
+db.Comments.belongsTo(db.Users, { foreignKey: 'user_id', sourceKey: 'id' });
+db.Posts.hasMany(db.Comments, { foreignKey: 'post_id', sourceKey: 'id' });
+db.Comments.belongsTo(db.Posts, { foreignKey: 'post_id', sourceKey: 'id' });
+db.Users.hasMany(db.Follows, { foreignKey: 'user_id', sourceKey: 'id' });
+db.Follows.belongsTo(db.Users, { foreignKey: 'user_id', sourceKey: 'id' });
+db.Users.hasMany(db.Follows, { foreignKey: 'follow_user_id', sourceKey: 'id' });
+db.Follows.belongsTo(db.Users, { foreignKey:' follow_user_id', sourceKey: 'id' });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
