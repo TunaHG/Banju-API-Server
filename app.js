@@ -4,15 +4,14 @@ const config = require('./config/config');
 
 const musicreg = require('./api/v1/musicreg');
 const playmeta = require('./api/v1/playmeta');
-const google = require('./api/v1/google');
-const kakao = require('./api/v1/kakao');
+const user = require('./api/v1/user');
 
 // Sequelize Setting
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize(config.databaseurl);
 const models = require('./models');
 
-models.sequelize.sync({ })
+models.sequelize.sync({ force: true })
 .then(() => {
     console.log("DB sync Success");
 })
@@ -44,8 +43,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 
 app.use('/musicreg', musicreg);
 app.use('/playmeta', playmeta);
-app.use('/google', google);
-app.use('/kakao', kakao);
+app.use('/user', user);
 
 app.listen(port, (err) => {
     if(err) {

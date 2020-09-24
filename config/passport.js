@@ -1,4 +1,7 @@
 const passport = require('passport');
+const passportJWT = require('passport-jwt');
+const ExtractJWT = passportJWT.ExtractJwt;
+const JWTStrategy = passportJWT.Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const KakaoStrategy = require('passport-kakao').Strategy;
 // const AppleStrategy = require('').Strategy;
@@ -30,4 +33,10 @@ module.exports = () => {
     }));
 
     // passport.use(new AppleStrategy({}, {}));
+    passport.use(new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: config.jwtsecret
+    }, (jwtPayload, done) => {
+
+    }))
 }
