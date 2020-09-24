@@ -1,4 +1,4 @@
-const models = require('../models');
+const models = require('../db/models');
 
 // * after midterm, change to function using id
 

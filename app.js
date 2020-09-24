@@ -9,7 +9,7 @@ const user = require('./api/v1/user');
 // Sequelize Setting
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize(config.databaseurl);
-const models = require('./models');
+const models = require('./db/models');
 
 models.sequelize.sync({ force: true })
 .then(() => {

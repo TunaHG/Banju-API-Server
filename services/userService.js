@@ -6,9 +6,7 @@ exports.join = async (user) => {
     let result = user;
     await models.Users.create({
         email: user.email,
-        password: '1234',
-        nickname: user.nickname,
-        phone: '010-9611-7555'
+        nickname: user.nickname
     })
     .then((users) => {
         users.save();

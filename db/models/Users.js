@@ -3,14 +3,16 @@ module.exports = (sequelize, Sequelize) => {
     // Set model Users
     return sequelize.define('Users', {
         id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV1,
+            primaryKey: true
         },
         // social login, your login id
-        email: Sequelize.STRING,
-        // login password
-        password: Sequelize.STRING,
+        email: {
+            type: Sequelize.STRING,
+            unique: true,
+            allowNull: false
+        },
         // display name to other users
         nickname: Sequelize.STRING,
         // if you want display your phone number
@@ -23,6 +25,8 @@ module.exports = (sequelize, Sequelize) => {
         // createdAt, updatedAt create!
         timestamps: true,
         // updatedAt does not created
-        updatedAt: false
+        updatedAt: false,
+        // apply snake case on foreign key
+        underscored: true
     });
 };
