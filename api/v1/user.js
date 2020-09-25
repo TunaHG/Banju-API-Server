@@ -101,7 +101,7 @@ router.post('/join', (req, res) => {
 router.get('/me/:id', (req, res) => {
     userService.getUserInfo(req.params.id)
     .then((result) => {
-        return res.send({status: 'Success', data: result);
+        return res.send({status: 'Success', data: result});
     })
     .catch((err) => {
         console.log('Error in /user/me API');
