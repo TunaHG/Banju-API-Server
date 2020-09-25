@@ -1,35 +1,63 @@
 const config = require('../config/config');
 
-const models = require('../models');
+const models = require('../db/models');
 
-exports.join = async (user) => {
-    let result = user;
+exports.joinUser = async (email, nickname) => {
     await models.Users.create({
-        email: user.email,
-        nickname: user.nickname
+        email: email,
+        nickname: nickname
     })
-    .then((users) => {
-        users.save();
+    .then((user) => {
+        user.save();
         console.log("User Join Success");
-        result = users;
+        return user.id;
     })
     .catch((err) => {
         console.log("User Join Failed", err);
+        return 'JoinError'
     })
-
-    return result;
 };
 
-exports.findUser = async (email) => {
-    const result = await models.Users.findOne({
+exports.checkJoined = async (email) => {
+    let result = 0;
+    await models.Users.findOne({
+        attributes: ['id'],
         where: {
             email: email
         }
+    })
+    .then((data) => {
+        console.log("Find user Success")
+        console.log(data);
+
+        if(data == null) {
+            result = 0;
+        }
+        else {
+            result = data.id;
+        }
+    })
+    .catch((err) => {
+        console.log("Find user Error occur");
+        console.log(err);
+        result = 'Err';
     });
-    console.log('Find user data');
+    
     console.log(result);
-    if(result == null){
-        result = false;
-    }
     return result;
 };
+
+exports.getUserInfo = (id) => {
+    models.Users.findOne({
+        where: {
+            id: id
+        }
+    })
+    .then((data) => {
+        return data.dataValues;
+    })
+    .catch((err) => {
+        console.log("getUserInfo()'s Error occur");
+        return err;
+    })
+}
