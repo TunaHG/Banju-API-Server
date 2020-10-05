@@ -8,15 +8,18 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 /*
+ * Check member API
+ * get userInfo from social login(kakao, google, apple) using accesstoken from frontend
+ * check our database using user's email
+ * return status of user's join status
+ *
  * Type : kakao, google, apple
  * accessToken : Each type's Login Authenticate accesstoken
- * 
- * 
  */
 router.get('/:type/:accessToken', (req, res) => {
     const type = req.params.type;
     const author = 'Bearer ' + req.params.accessToken;
-    // Kakao Login
+    // Using accesstoken from kakao
     if(type == 'kakao'){
         const option = {
             method: 'POST',
@@ -54,6 +57,7 @@ router.get('/:type/:accessToken', (req, res) => {
             res.send({status: 'AxiosError'});
         });
     }
+    // Using accesstoken from google
     else if(type == 'google') {
         const option = {
             method: 'GET',
@@ -74,14 +78,20 @@ router.get('/:type/:accessToken', (req, res) => {
             res.send(err);
         })
     } 
+    // Using accesstoken from apple
     else if(type == 'apple') {
 
     }
+    // Error
     else {
         res.send({status: 'Type Error'})
     }
 });
 
+/* 
+ * Join API
+ * Join our service with data (email, name)
+ */
 router.post('/join', (req, res) => {
     userService.joinUser(req.body.email, req.body.nickname)
     .then((result) => {
@@ -98,6 +108,11 @@ router.post('/join', (req, res) => {
     })
 });
 
+/*
+ * Get UserInfo API
+ * get user data
+ * name, email, banju, practice, ... etc
+ */
 router.get('/me/:id', (req, res) => {
     userService.getUserInfo(req.params.id)
     .then((result) => {
