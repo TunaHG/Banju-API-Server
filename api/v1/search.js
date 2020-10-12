@@ -30,6 +30,7 @@ router.get('/:keyword', (req, res) => {
             tmp.thumbnail = item.snippet.thumbnails.default;
             searchService.findBanju(tmp.id)
             .then((result) => {
+                // TODO: Banju의 Scale 추가
                 tmp.convert = 'Banjued';
             })
             .catch((err) => {
@@ -37,12 +38,12 @@ router.get('/:keyword', (req, res) => {
             })
             result.push(tmp);
         });
+        res.send(result);
     })
     .catch((err) => {
-        
+        console.log("Axios request Error in Youtube Data API")
+        res.send({status: 'Error'});
     })
-
-    res.send(result);
 })
 
 module.exports = router;

@@ -116,7 +116,8 @@ router.post('/', (req, res) => {
         //     return;
         // }
         // const response  = await auth.accessToken(code);
-        const idToken = jwt.decode(response.id_token);
+        // const idToken = jwt.decode(response.id_token);
+        const idToken = jwt.decode(req.body.accessToken);
         console.log(idToken);
         const email = idToken.email;
         console.log(email);
