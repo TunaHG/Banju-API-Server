@@ -21,7 +21,10 @@
         - 'link' and 'content' must be included in the body
         - {"link" : "hash of youtube", "content" : .banju}
 - `/user`
-    - GET `/:type/:accesstoken` : Get JSON about Check our member or not
+    - POST `/` : Get JSON about Check our member or not
+        - type, accesstoken must be included in the body
+        - type : kakao, google, apple
+        - accesstoken : platform's accesstoken (but, apple is authorization code)
     - POST `/join` : if user is not our member, join user in our service
     - GET `/me/:id` : Get UserInfo from our service
 

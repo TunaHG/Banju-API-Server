@@ -4,6 +4,8 @@ const axios = require('axios');
 const config = require('../../config/config');
 const userService = require('../../services/userService');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const AppleAuth = require('apple-auth');
 
 const router = express.Router();
 
@@ -15,10 +17,13 @@ const router = express.Router();
  *
  * Type : kakao, google, apple
  * accessToken : Each type's Login Authenticate accesstoken
+ * 
+ * TODO: Type분기를 Service의 function으로 변경
  */
-router.get('/:type/:accessToken', (req, res) => {
-    const type = req.params.type;
-    const author = 'Bearer ' + req.params.accessToken;
+router.post('/', (req, res) => {
+    const type = req.body.type;
+    const author = 'Bearer ' + req.body.accessToken;
+    
     // Using accesstoken from kakao
     if(type == 'kakao'){
         const option = {
@@ -27,35 +32,35 @@ router.get('/:type/:accessToken', (req, res) => {
             headers: {
                 Authorization: author
             }
-        }
-
+        };
+        
         axios.request(option)
-        .then((data) => {
-            const apiResult = data.data.kakao_account;
-            userService.checkJoined(apiResult.email)
+        .then(({data}) => {
+            const kakaoInfo = data.kakao_account;
+            userService.checkJoined(kakaoInfo.email)
             .then((userId) => {
-                if(userId == 0){
-                    return res.send({status: 'not user'})
+                if(userId == 0) {
+                    res.send({message: 'not user'});
                 }
                 else if(userId == 'Err') {
                     throw Error();
                 }
                 else {
                     const token = jwt.sign({id: userId}, config.jwtsecret);
-                    return res.send({status: 'already user', token});
+                    res.send({message: 'already user', token});
                 }
             })
             .catch((err) => {
-                console.log("findUser Service Error in user api");
+                console.log('CheckJoined Error in kakaologin func');
                 console.log(err);
-                res.send({status: 'CheckError'});
-            })
+                res.send({message: 'checkJoinedError'});
+            });
         })
         .catch((err) => {
-            console.log("Axios request Error in uesr api");
+            console.log('Axios request Error in kakaologin func');
             console.log(err);
-            res.send({status: 'AxiosError'});
-        });
+            res.send({message: 'AxiosrequestError'});
+        })
     }
     // Using accesstoken from google
     else if(type == 'google') {
@@ -68,23 +73,73 @@ router.get('/:type/:accessToken', (req, res) => {
             params: {
                 alt: 'json'
             }
-        }
+        };
+    
         axios.request(option)
-        .then((data) => {
-            
+        .then(({data}) => {
+            userService.checkJoined(data.email)
+            .then((userId) => {
+                if(userId == 0) {
+                    console.log('not user');
+                    res.send({message: 'not user'});
+                }
+                else if(userId == 'Err') {
+                    throw Error();
+                }
+                else {
+                    console.log('already user');
+                    const token = jwt.sign({id: userId}, config.jwtsecret);
+                    res.send({message: 'already user', token});
+                }
+            })
+            .catch((err) => {
+                console.log('CheckJoined Error in googlelogin func');
+                console.log(err);
+                res.send({message: 'checkJoinedError'});
+            });
         })
         .catch((err) => {
-            console.log('Error in axios!!!');
-            res.send(err);
-        })
+            console.log('Axios request error in googlelogin func');
+            console.log(err);
+            res.send({message: 'AxiosrequestError'});
+        });
     } 
     // Using accesstoken from apple
     else if(type == 'apple') {
+        // GET https://appleid.apple.com/auth/keys
+        // value e decode Base64
 
-    }
-    // Error
-    else {
-        res.send({status: 'Type Error'})
+        // apple-auth를 통한 이메일 추출
+        let { code } = req.body;
+        if (!code) { 
+            res.status(200).json(NULL_VALUE);
+            return;
+        }
+        const response  = await auth.accessToken(code);
+        const idToken = jwt.decode(response.id_token);
+        const email = idToken.email;
+        console.log(email);
+
+        userService.checkJoined(email)
+            .then((userId) => {
+                if(userId == 0) {
+                    console.log('not user');
+                    res.send({message: 'not user'});
+                }
+                else if(userId == 'Err') {
+                    throw Error();
+                }
+                else {
+                    console.log('already user');
+                    const token = jwt.sign({id: userId}, config.jwtsecret);
+                    res.send({message: 'already user', token});
+                }
+            })
+            .catch((err) => {
+                console.log('CheckJoined Error in googlelogin func');
+                console.log(err);
+                res.send({message: 'checkJoinedError'});
+            });
     }
 });
 
@@ -97,14 +152,14 @@ router.post('/join', (req, res) => {
     .then((result) => {
         if(result != 'JoinError'){
             const token = jwt.sign({id: result}, config.jwtsecret);
-            return res.send({token});
+            return res.send({message: 'Success', token});
         } else {
-            return res.send({status: 'Error'})
+            return res.send({message: 'Error'})
         }
     })
     .catch((err) => {
         console.log("Error in Join");
-        return res.send({status: 'Error'});
+        return res.send({message: 'Error'});
     })
 });
 
@@ -112,6 +167,8 @@ router.post('/join', (req, res) => {
  * Get UserInfo API
  * get user data
  * name, email, banju, practice, ... etc
+ * 
+ * TODO: 세션으로 넘어오는 JWT decode해서 사용
  */
 router.get('/me/:id', (req, res) => {
     userService.getUserInfo(req.params.id)
