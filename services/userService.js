@@ -133,7 +133,7 @@ exports.googlelogin = async (author) => {
         .catch((err) => {
             console.log('CheckJoined Error in googlelogin func');
             console.log(err);
-            return JSON.stringify({message: 'checkJoinedError'});
+            return {message: 'checkJoinedError'};
         });
     })
     .catch((err) => {
@@ -141,4 +141,32 @@ exports.googlelogin = async (author) => {
         console.log(err);
         return {message: 'AxiosrequestError'};
     });
+};
+
+exports.applelogin = (idToken) => {
+    const idToken = jwt.decode(req.body.accessToken);
+    console.log(idToken);
+    const email = idToken.email;
+    console.log(email);
+
+    this.checkJoined(email)
+        .then((userId) => {
+            if(userId == 0) {
+                console.log('not user');
+                return {message: 'not user'};
+            }
+            else if(userId == 'Err') {
+                throw Error();
+            }
+            else {
+                console.log('already user');
+                const token = jwt.sign({id: userId}, config.jwtsecret);
+                return {message: 'already user', token};
+            }
+        })
+        .catch((err) => {
+            console.log('CheckJoined Error in googlelogin func');
+            console.log(err);
+            return {message: 'checkJoinedError'};
+        });
 };

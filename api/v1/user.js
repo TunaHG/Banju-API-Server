@@ -104,19 +104,18 @@ router.post('/', (req, res) => {
             res.send({message: 'AxiosrequestError'});
         });
     } 
-    // Using accesstoken from apple
+    // Using idtoken from apple
     else if(type == 'apple') {
-        // GET https://appleid.apple.com/auth/keys
-        // value e decode Base64
-
         // apple-auth를 통한 이메일 추출
-        let { code } = req.body;
-        if (!code) { 
-            res.status(200).json(NULL_VALUE);
-            return;
-        }
-        const response  = await auth.accessToken(code);
-        const idToken = jwt.decode(response.id_token);
+        // let { code } = req.body;
+        // if (!code) { 
+        //     res.status(200).json(NULL_VALUE);
+        //     return;
+        // }
+        // const response  = await auth.accessToken(code);
+        // const idToken = jwt.decode(response.id_token);
+        const idToken = jwt.decode(req.body.accessToken);
+        console.log(idToken);
         const email = idToken.email;
         console.log(email);
 
