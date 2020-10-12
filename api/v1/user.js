@@ -110,13 +110,14 @@ router.post('/', (req, res) => {
         // value e decode Base64
 
         // apple-auth를 통한 이메일 추출
-        let { code } = req.body;
-        if (!code) { 
-            res.status(200).json(NULL_VALUE);
-            return;
-        }
-        const response  = await auth.accessToken(code);
+        // let { code } = req.body;
+        // if (!code) { 
+        //     res.status(200).json(NULL_VALUE);
+        //     return;
+        // }
+        // const response  = await auth.accessToken(code);
         const idToken = jwt.decode(response.id_token);
+        console.log(idToken);
         const email = idToken.email;
         console.log(email);
 

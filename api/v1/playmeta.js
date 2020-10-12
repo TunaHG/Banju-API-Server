@@ -3,6 +3,7 @@ const { find, update } = require('../../services/playmetaService');
 
 const router = express.Router();
 
+// TODO: content에 Error가 있을경우 Client에게 Error return하고 DB row 삭제
 // Get Converted Result for Client
 router.get('/:link', (req, res) => {
     let resultjson = {};
@@ -27,6 +28,7 @@ router.get('/:link', (req, res) => {
     });
 });
 
+// TODO: AI Model에서 Status를 넘겨줄 예정, Error아니면 정상
 // Save Data to DB, about Convereted Result from AI Model
 router.post('/', (req, res) => {
     update(req.body.link, req.body.content)
@@ -47,5 +49,7 @@ router.post('/', (req, res) => {
         res.send(JSON.parse('{"msg":"Error"}'));
     });
 });
+
+// TODO: Edit API (추후, AWS rambda로 보내서 결과를 받아야할 수 있음. -noteLeft, Right등 노트가 떨어지는 위치도 변경해줘야 하기 때문)
 
 module.exports = router;
