@@ -3,20 +3,19 @@ const models = require('../db/models');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
-exports.joinUser = async (email, nickname) => {
+exports.joinUser = async (email) => {
     await models.Users.create({
         email: email,
-        nickname: nickname
     })
-    .then((user) => {
-        user.save();
-        console.log("User Join Success");
-        return user.id;
-    })
-    .catch((err) => {
-        console.log("User Join Failed", err);
-        return 'JoinError'
-    })
+        .then((user) => {
+            user.save();
+            console.log("User Join Success");
+            return user.id;
+        })
+        .catch((err) => {
+            console.log("User Join Failed", err);
+            return 'joinerror'
+        })
 };
 
 exports.checkJoined = async (email) => {
@@ -27,23 +26,23 @@ exports.checkJoined = async (email) => {
             email: email
         }
     })
-    .then((data) => {
-        console.log("Find user Success")
-        console.log(data);
+        .then((data) => {
+            console.log("Find user Success")
+            console.log(data);
 
-        if(data == null) {
-            result = 0;
-        }
-        else {
-            result = data.id;
-        }
-    })
-    .catch((err) => {
-        console.log("Find user Error occur");
-        console.log(err);
-        result = 'Err';
-    });
-    
+            if (data == null) {
+                result = 0;
+            }
+            else {
+                result = data.id;
+            }
+        })
+        .catch((err) => {
+            console.log("Find user Error occur");
+            console.log(err);
+            result = 'err';
+        });
+
     console.log(result);
     return result;
 };
@@ -54,13 +53,13 @@ exports.getUserInfo = (id) => {
             id: id
         }
     })
-    .then((data) => {
-        return data.dataValues;
-    })
-    .catch((err) => {
-        console.log("getUserInfo()'s Error occur");
-        return err;
-    })
+        .then((data) => {
+            return data.dataValues;
+        })
+        .catch((err) => {
+            console.log("getUserInfo()'s Error occur");
+            return err;
+        })
 };
 
 exports.kakaologin = async (author) => {
@@ -71,102 +70,115 @@ exports.kakaologin = async (author) => {
             Authorization: author
         }
     };
-    
-    await axios.request(option)
-    .then(({data}) => {
-        const kakaoInfo = data.kakao_account;
-        this.checkJoined(kakaoInfo.email)
-        .then((userId) => {
-            if(userId == 0) {
-                return {message: 'not user'};
-            }
-            else if(userId == 'Err') {
-                throw Error();
-            }
-            else {
-                const token = jwt.sign({id: userId}, config.jwtsecret);
-                return {message: 'already user', token};
-            }
-        })
-        .catch((err) => {
-            console.log('CheckJoined Error in kakaologin func');
-            console.log(err);
-            return {message: 'checkJoinedError'};
-        });
-    })
-    .catch((err) => {
-        console.log('Axios request Error in kakaologin func');
-        console.log(err);
-        return {message: 'AxiosrequestError'};
-    })
-};
-
-exports.googlelogin = async (author) => {
-    const option = {
-        method: 'GET',
-        url: 'https://www.googleapis.com/oauth2/v1/userinfo',
-        headers: {
-            Authorization: author
-        },
-        params: {
-            alt: 'json'
-        }
-    };
 
     await axios.request(option)
-    .then(({data}) => {
-        this.checkJoined(data.email)
-        .then((userId) => {
-            if(userId == 0) {
-                console.log('not user');
-                return {message: 'not user'};
-            }
-            else if(userId == 'Err') {
-                throw Error();
-            }
-            else {
-                console.log('already user');
-                const token = jwt.sign({id: userId}, config.jwtsecret);
-                return {message: 'already user', token};
-            }
+        .then(({ data }) => {
+            const kakaoInfo = data.kakao_account;
+            this.checkJoined(kakaoInfo.email)
+                .then((userId) => {
+                    if (userId == 0) {
+                        this.joinUser(kakaoInfo.email)
+                            .then((id) => {
+                                if (id != 'joinerror') {
+                                    const token = jwt.sign({ id: id }, config.jwtsecret);
+                                    res.send({ message: 'not user', token });
+                                }
+                                else {
+                                    throw Error();
+                                }
+                            })
+                            .catch((err) => {
+                                console.log('joinuser error in kakaologin func');
+                                res.send({ message: 'joinUserError', error: err.message });
+                            });
+                    }
+                    else if (userId == 'Err') {
+                        throw Error();
+                    }
+                    else {
+                        const token = jwt.sign({ id: userId }, config.jwtsecret);
+                        return { message: 'already user', token };
+                    }
+                })
+                .catch((err) => {
+                    console.log('CheckJoined Error in kakaologin func');
+                    console.log(err);
+                    return { message: 'checkJoinedError' };
+                });
         })
         .catch((err) => {
-            console.log('CheckJoined Error in googlelogin func');
+            console.log('Axios request Error in kakaologin func');
             console.log(err);
-            return {message: 'checkJoinedError'};
-        });
-    })
-    .catch((err) => {
-        console.log('Axios request error in googlelogin func');
-        console.log(err);
-        return {message: 'AxiosrequestError'};
-    });
-};
-
-exports.applelogin = (idToken) => {
-    const idToken = jwt.decode(req.body.accessToken);
-    console.log(idToken);
-    const email = idToken.email;
-    console.log(email);
-
-    this.checkJoined(email)
-        .then((userId) => {
-            if(userId == 0) {
-                console.log('not user');
-                return {message: 'not user'};
-            }
-            else if(userId == 'Err') {
-                throw Error();
-            }
-            else {
-                console.log('already user');
-                const token = jwt.sign({id: userId}, config.jwtsecret);
-                return {message: 'already user', token};
-            }
+            return { message: 'AxiosrequestError' };
         })
-        .catch((err) => {
-            console.log('CheckJoined Error in googlelogin func');
-            console.log(err);
-            return {message: 'checkJoinedError'};
-        });
 };
+
+// exports.googlelogin = async (author) => {
+//     const option = {
+//         method: 'GET',
+//         url: 'https://www.googleapis.com/oauth2/v1/userinfo',
+//         headers: {
+//             Authorization: author
+//         },
+//         params: {
+//             alt: 'json'
+//         }
+//     };
+
+//     await axios.request(option)
+//         .then(({ data }) => {
+//             this.checkJoined(data.email)
+//                 .then((userId) => {
+//                     if (userId == 0) {
+//                         console.log('not user');
+//                         return { message: 'not user' };
+//                     }
+//                     else if (userId == 'Err') {
+//                         throw Error();
+//                     }
+//                     else {
+//                         console.log('already user');
+//                         const token = jwt.sign({ id: userId }, config.jwtsecret);
+//                         return { message: 'already user', token };
+//                     }
+//                 })
+//                 .catch((err) => {
+//                     console.log('CheckJoined Error in googlelogin func');
+//                     console.log(err);
+//                     return { message: 'checkJoinedError' };
+//                 });
+//         })
+//         .catch((err) => {
+//             console.log('Axios request error in googlelogin func');
+//             console.log(err);
+//             return { message: 'AxiosrequestError' };
+//         });
+// };
+
+// exports.applelogin = (idToken) => {
+//     const idToken = jwt.decode(req.body.accessToken);
+//     console.log(idToken);
+//     const email = idToken.email;
+//     console.log(email);
+
+//     this.checkJoined(email)
+//         .then((userId) => {
+//             if (userId == 0) {
+//                 console.log('not user');
+//                 return { message: 'not user' };
+//             }
+//             else if (userId == 'Err') {
+//                 throw Error();
+//             }
+//             else {
+//                 console.log('already user');
+//                 const token = jwt.sign({ id: userId }, config.jwtsecret);
+//                 return { message: 'already user', token };
+//             }
+//         })
+//         .catch((err) => {
+//             console.log('CheckJoined Error in googlelogin func');
+//             console.log(err);
+//             return { message: 'checkJoinedError' };
+//         });
+// };
