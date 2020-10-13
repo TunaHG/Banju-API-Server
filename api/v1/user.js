@@ -93,7 +93,7 @@ router.post('/', (req, res) => {
                 userService.checkJoined(data.email)
                     .then((userId) => {
                         if (userId == 0) {
-                            userService.joinUser(kakaoInfo.email)
+                            userService.joinUser(data.email)
                                 .then((id) => {
                                     if (id != 'joinerror') {
                                         const token = jwt.sign({ id: id }, config.jwtsecret);
@@ -147,8 +147,20 @@ router.post('/', (req, res) => {
         userService.checkJoined(email)
             .then((userId) => {
                 if (userId == 0) {
-                    console.log('not user');
-                    res.send({ message: 'not user' });
+                    userService.joinUser(email)
+                        .then((id) => {
+                            if (id != 'joinerror') {
+                                const token = jwt.sign({ id: id }, config.jwtsecret);
+                                res.send({ message: 'not user', token });
+                            }
+                            else {
+                                throw Error();
+                            }
+                        })
+                        .catch((err) => {
+                            console.log('joinuser error in kakaologin func');
+                            res.send({ message: 'joinUserError', error: err.message });
+                        });
                 }
                 else if (userId == 'Err') {
                     throw Error();
