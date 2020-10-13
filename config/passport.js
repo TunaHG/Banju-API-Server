@@ -8,11 +8,11 @@ const KakaoStrategy = require('passport-kakao').Strategy;
 const config = require('./config');
 
 module.exports = () => {
-    passport.serializeUser( (user, done) => {
+    passport.serializeUser((user, done) => {
         done(null, user);
     });
 
-    passport.deserializeUser( (user, done) => {
+    passport.deserializeUser((user, done) => {
         done(null, user);
     });
 
