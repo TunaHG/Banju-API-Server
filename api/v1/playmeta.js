@@ -27,7 +27,6 @@ router.get("/:link", (req, res) => {
         // TODO: findBanju Service의 select 결과가 없으면 Error발생, 이외의 에러는?
         .catch(async (err) => {
             console.log("Never been requested");
-            // TODO: musicreg Logic progress
             const sqsdata = await playmetaService.sendToSQS(link);
 
             resultjson.data = sqsdata;
@@ -38,9 +37,6 @@ router.get("/:link", (req, res) => {
 
 // Save Data to DB, about Convereted Result from AI Model
 router.post("/", (req, res) => {
-    // status(success, error), message(Error Meesage) 추가?
-    // status == error >> client error
-    // content = 'Err'
     playmetaService.updateBanju(req.body.link, req.body.content)
         .then((update) => {
             console.log("number of row updated: ", update);
