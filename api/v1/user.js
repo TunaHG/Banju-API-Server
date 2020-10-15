@@ -141,6 +141,9 @@ router.post('/', (req, res) => {
         // const idToken = jwt.decode(response.id_token);
         const idToken = jwt.decode(req.body.accessToken);
         console.log(idToken);
+        if (!(idToken.iss === 'https://appleid.apple.com')) {
+            res.send({ message: 'AppleAuth denied' });
+        }
         const email = idToken.email;
         console.log(email);
 
