@@ -53,6 +53,17 @@ exports.sendToSQS = async (link) => {
 
 // DB: Select function using link
 exports.findBanju = async (link) => {
+	const count = await models.Banjus.count({
+		where: {
+			link: link
+		}
+	});
+
+	if (count === 0) {
+		console.log("Not found row about videoId");
+		return 0;
+	}
+
 	const find = await models.Banjus.findOne({
 		attributes: ['content'],
 		where: {

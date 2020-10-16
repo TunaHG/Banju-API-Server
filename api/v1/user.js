@@ -5,7 +5,7 @@ const config = require('../../config/config');
 const userService = require('../../services/userService');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-const AppleAuth = require('apple-auth');
+// const AppleAuth = require('apple-auth');
 
 const router = express.Router();
 
@@ -142,14 +142,14 @@ router.post('/', async (req, res) => {
 	//         });
 	// }
 
-	let result = 'aa';
-	if (kakao) {
-		// resolve안에 넣은 값이 return됨
-		result = await userService.kakaologin(author);
-	}
+	// let result = 'aa';
+	// if (kakao) {
+	// 	// resolve안에 넣은 값이 return됨
+	// 	result = await userService.kakaologin(author);
+	// }
 
-	console.log(result);
-	res.send(result);
+	// console.log(result);
+	// res.send(result);
 });
 
 /*

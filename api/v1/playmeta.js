@@ -9,10 +9,16 @@ router.get("/:link", (req, res) => {
     const resultjson = {};
     // SQL Select query
     playmetaService.findBanju(link)
-        .then((content) => {
-            if (content == null) {
+        .then(async (content) => {
+            if (content === null) {
                 resultjson.status = "working";
                 console.log("Conversion working.");
+            } else if (content === 0) {
+                resultjson.status = 'Banjuing Start';
+                const sqsdata = await playmetaService.sendToSQS(link);
+
+                resultjson.data = sqsdata;
+                console.log('Music regist result: ', sqsdata);
             } else if (content.status == "success") {
                 resultjson.content = content;
                 resultjson.status = "finished";
@@ -26,11 +32,9 @@ router.get("/:link", (req, res) => {
         })
         // TODO: findBanju Service의 select 결과가 없으면 Error발생, 이외의 에러는?
         .catch(async (err) => {
-            console.log("Never been requested");
-            const sqsdata = await playmetaService.sendToSQS(link);
-
-            resultjson.data = sqsdata;
-            console.log('Music regist result: ', sqsdata);
+            console.log('Error occur in findBanju Func');
+            console.log(err);
+            resultjson.status = 'Error';
             res.send(resultjson);
         });
 });
