@@ -19,14 +19,18 @@ router.get("/:link", (req, res) => {
 
                 resultjson.data = sqsdata;
                 console.log('Music regist result: ', sqsdata);
-            } else if (content.status == "success") {
+            } else if (content.status === "success") {
                 resultjson.content = content;
                 resultjson.status = "finished";
                 console.log("Conversion finish.");
-            } else {
+            } else if (content.status === 'error') {
                 playmetaService.deleteBanju(req.params.link);
                 resultjson.status = "Error";
                 console.log("Conversion error");
+            } else {
+                resultjson.status = 'working';
+                resultjson.content = content;
+                console.log('Conversion working in ${content}%');
             }
             res.send(resultjson);
         })
