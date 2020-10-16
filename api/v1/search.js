@@ -5,7 +5,7 @@ const searchService = require('../../services/searchService');
 
 const router = express.Router();
 
-router.get('/:keyword', async (req, res) => {
+router.get('/:keyword', (req, res) => {
     const keyword = req.params.keyword;
 
     const option = {
@@ -16,17 +16,24 @@ router.get('/:keyword', async (req, res) => {
             q: keyword,
             type: 'video',
             key: config.googleapikey,
-            maxResult: 10,
+            maxResults: '5',
             order: 'relevance',
             topicId: '/m/04rlf'
         }
     }
 
-    let result = [];
-    await axios.request(option)
-        .then(({ data }) => {
-            items = data.items;
-            items.forEach(async (element) => {
+    axios.request(option)
+        .then(async ({ data }) => {
+            console.log('first resolve()');
+            const items = data.items;
+            console.log(items.length);
+            // searchService.getDataFromitems(items)
+            //     .then((result) => {
+            //         res.send(result);
+            //     });
+
+            let result = [];
+            for (const element of items) {
                 let tmp = {};
                 tmp.id = element.id.videoId;
                 tmp.title = element.snippet.title;
@@ -47,18 +54,35 @@ router.get('/:keyword', async (req, res) => {
                     .catch((err) => {
                         console.log('findBanju Function error in search API');
                         console.log(err);
+                    });
+                const option = {
+                    method: 'GET',
+                    url: 'https://www.googleapis.com/youtube/v3/videos',
+                    params: {
+                        key: config.googleapikey,
+                        id: tmp.id,
+                        part: 'contentDetails'
+                    }
+                }
+                await axios.request(option)
+                    .then(({ data }) => {
+                        const items = data.items;
+                        tmp.duration = items[0].contentDetails.duration;
+                    })
+                    .catch((err) => {
+                        console.log('video contentDetails api error')
+                        console.log(err);
+                        tmp.duration = 'PT0M00S';
                     })
                 result.push(tmp);
-                console.log(result);
-            });
+            }
+            res.send(result);
         })
         .catch((err) => {
             console.log("Axios request Error in Youtube Data API")
             console.log(err);
             res.send({ status: 'Error', error: err });
         });
-    console.log(1);
-    res.send(result);
 })
 
 module.exports = router;
