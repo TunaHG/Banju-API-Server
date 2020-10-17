@@ -20,166 +20,23 @@ const router = express.Router();
  * 
  * TODO: Type분기를 Service의 function으로 변경
  */
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const type = req.body.type;
     const author = 'Bearer ' + req.body.accessToken;
 
-    // Using accesstoken from kakao
-    if (type == 'kakao') {
-        const option = {
-            method: 'POST',
-            url: 'https://kapi.kakao.com/v2/user/me',
-            headers: {
-                Authorization: author
-            }
-        };
-
-        axios.request(option)
-            .then(({ data }) => {
-                const kakaoInfo = data.kakao_account;
-                userService.checkJoined(kakaoInfo.email)
-                    .then((userId) => {
-                        if (userId == 0) {
-                            userService.joinUser(kakaoInfo.email)
-                                .then((id) => {
-                                    if (id != 'joinerror') {
-                                        const token = jwt.sign({ id: id }, config.jwtsecret);
-                                        res.send({ message: 'not user', token });
-                                    }
-                                    else {
-                                        throw Error();
-                                    }
-                                })
-                                .catch((err) => {
-                                    console.log('joinuser error in kakaologin func');
-                                    res.send({ message: 'joinUserError', error: err.message });
-                                });
-                        }
-                        else if (userId == 'Err') {
-                            throw Error();
-                        }
-                        else {
-                            const token = jwt.sign({ id: userId }, config.jwtsecret);
-                            res.send({ message: 'already user', token });
-                        }
-                    })
-                    .catch((err) => {
-                        console.log('CheckJoined Error in kakaologin func');
-                        console.log(err);
-                        res.send({ message: 'checkJoinedError', error: err.message });
-                    });
-            })
-            .catch((err) => {
-                console.log('Axios request Error in kakaologin func');
-                console.log(err);
-                res.send({ message: 'AxiosrequestError', error: err.message });
-            })
+    let result = { message: 'wow' };
+    if (type === 'kakao') {
+        result = await userService.kakaologin(author);
     }
-    // Using accesstoken from google
-    else if (type == 'google') {
-        const option = {
-            method: 'GET',
-            url: 'https://www.googleapis.com/oauth2/v1/userinfo',
-            headers: {
-                Authorization: author
-            },
-            params: {
-                alt: 'json'
-            }
-        };
-
-        axios.request(option)
-            .then(({ data }) => {
-                userService.checkJoined(data.email)
-                    .then((userId) => {
-                        if (userId == 0) {
-                            userService.joinUser(data.email)
-                                .then((id) => {
-                                    if (id != 'joinerror') {
-                                        const token = jwt.sign({ id: id }, config.jwtsecret);
-                                        res.send({ message: 'not user', token });
-                                    }
-                                    else {
-                                        throw Error();
-                                    }
-                                })
-                                .catch((err) => {
-                                    console.log('joinuser error in kakaologin func');
-                                    res.send({ message: 'joinUserError', error: err.message });
-                                });
-                        }
-                        else if (userId == 'Err') {
-                            throw Error();
-                        }
-                        else {
-                            console.log('already user');
-                            const token = jwt.sign({ id: userId }, config.jwtsecret);
-                            res.send({ message: 'already user', token });
-                        }
-                    })
-                    .catch((err) => {
-                        console.log('CheckJoined Error in googlelogin func');
-                        console.log(err);
-                        res.send({ message: 'checkJoinedError' });
-                    });
-            })
-            .catch((err) => {
-                console.log('Axios request error in googlelogin func');
-                console.log(err);
-                res.send({ message: 'AxiosrequestError' });
-            });
+    else if (type === 'google') {
+        result = await userService.googlelogin(author);
     }
-    // Using idtoken from apple
-    else if (type == 'apple') {
-        // apple-auth를 통한 이메일 추출
-        // let { code } = req.body;
-        // if (!code) { 
-        //     res.status(200).json(NULL_VALUE);
-        //     return;
-        // }
-        // const response  = await auth.accessToken(code);
-        // const idToken = jwt.decode(response.id_token);
-        const idToken = jwt.decode(req.body.accessToken);
-        console.log(idToken);
-        if (!(idToken.iss === 'https://appleid.apple.com')) {
-            res.send({ message: 'AppleAuth denied' });
-        }
-        const email = idToken.email;
-        console.log(email);
-
-        userService.checkJoined(email)
-            .then((userId) => {
-                if (userId == 0) {
-                    userService.joinUser(email)
-                        .then((id) => {
-                            if (id != 'joinerror') {
-                                const token = jwt.sign({ id: id }, config.jwtsecret);
-                                res.send({ message: 'not user', token });
-                            }
-                            else {
-                                throw Error();
-                            }
-                        })
-                        .catch((err) => {
-                            console.log('joinuser error in kakaologin func');
-                            res.send({ message: 'joinUserError', error: err.message });
-                        });
-                }
-                else if (userId == 'Err') {
-                    throw Error();
-                }
-                else {
-                    console.log('already user');
-                    const token = jwt.sign({ id: userId }, config.jwtsecret);
-                    res.send({ message: 'already user', token });
-                }
-            })
-            .catch((err) => {
-                console.log('CheckJoined Error in googlelogin func');
-                console.log(err);
-                res.send({ message: 'checkJoinedError' });
-            });
+    else if (type === 'apple') {
+        result = await userService.applelogin(author);
     }
+
+    console.log(result);
+    res.send(result);
 });
 
 /* 
@@ -212,11 +69,11 @@ router.post('/join', (req, res) => {
 router.get('/me/:id', (req, res) => {
     userService.getUserInfo(req.params.id)
         .then((result) => {
-            return res.send({ status: 'Success', data: result });
+            return res.send({ status: 'success', data: result });
         })
         .catch((err) => {
             console.log('Error in /user/me API');
-            return res.send({ status: 'Error' })
+            return res.send({ status: 'error' })
         })
 });
 
