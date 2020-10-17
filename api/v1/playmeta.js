@@ -3,47 +3,71 @@ const playmetaService = require("../../services/playmetaService");
 
 const router = express.Router();
 
-// Get Converted Result for Client
+/*
+ * Create, Find banju data's status API
+ * GET /playmeta/:link
+ * if we don't have Banju data, Send Youtube link to AI Model and Convert to Banju
+ * while Conversion, Send Progress status to Client
+ * after Conversion finish, Send Banju data to Client
+ * 
+ * link: Youtube Link what you want to convert
+ */
 router.get("/:link", (req, res) => {
     const link = req.params.link;
     const resultjson = {};
-    // SQL Select query
+    // TODO: AI Model에서 Error가 발생하여 Row는 남아있는데, Content는 업데이트가 안되는 상황 Handling
+    // SQL Select query function
     playmetaService.findBanju(link)
         .then(async (content) => {
             if (content === null) {
+                // TODO: null인 경우가 없지않나 이제?
                 resultjson.status = "working";
                 console.log("Conversion working.");
-            } else if (content === 0) {
+                res.status(102).send(resultjson);
+            }
+            // Select Query result have 0 row
+            else if (content === 0) {
                 resultjson.status = 'Banjuing Start';
                 const sqsdata = await playmetaService.sendToSQS(link);
 
                 resultjson.data = sqsdata;
                 console.log('Music regist result: ', sqsdata);
-            } else if (content.status === "success") {
+                res.status(100).send(resultjson);
+            }
+            // Finish Conversion from AI Model
+            else if (content.status === "success") {
                 resultjson.content = content;
                 resultjson.status = "finished";
                 console.log("Conversion finish.");
-            } else if (content.status === 'error') {
+                res.status(200).send(resultjson);
+            }
+            // Conversion Error from AI Model
+            else if (content.status === 'error') {
                 playmetaService.deleteBanju(req.params.link);
                 resultjson.status = "Error";
                 console.log("Conversion error");
-            } else {
+                res.status(205).send(resultjson);
+            }
+            // Conversion progress is working
+            else {
                 resultjson.status = 'working';
                 resultjson.content = content;
-                console.log('Conversion working in ${content}%');
+                console.log(`Conversion working in ${content}%`);
+                res.status(102).send(resultjson);
             }
-            res.send(resultjson);
         })
-        // TODO: findBanju Service의 select 결과가 없으면 Error발생, 이외의 에러는?
         .catch(async (err) => {
             console.log('Error occur in findBanju Func');
             console.log(err);
             resultjson.status = 'Error';
-            res.send(resultjson);
+            res.status(420).send(resultjson);
         });
 });
 
 // Save Data to DB, about Convereted Result from AI Model
+/**
+ * POST /playmeta
+ */
 router.post("/", (req, res) => {
     playmetaService.updateBanju(req.body.link, req.body.content)
         .then((update) => {
@@ -51,26 +75,27 @@ router.post("/", (req, res) => {
             // if update == 0, Means that no row has been updated
             if (update === 0) {
                 console.log("POST /playmeta Failed. there are no updated rows");
-                res.send({ message: "fail" });
+                res.status(204).send({ message: "fail" });
             }
             // update success
             else {
                 console.log("POST /playmeta Success");
-                res.send({ message: "success" });
+                res.status(200).send({ message: "success" });
             }
         })
         // DB Update query Error Handling
         .catch((err) => {
             console.log("POST /playmeta Failed. update query error");
-            res.send({ message: "Error", error: err });
+            res.status(420).send({ message: "Error", error: err });
         });
 });
 
+// TODO: Need update edit API (Error handling)
 // Edit Banju content about user customizig banju
 router.post("/edit", (req, res) => {
     playmetaService.editBanju(req.body.id, req.body.content)
         .then((data) => {
-            res.send({ message: data });
+            res.status(200).send({ message: data });
         })
         .catch((err) => {
             console.log(err);

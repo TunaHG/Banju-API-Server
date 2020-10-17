@@ -14,7 +14,7 @@ exports.sendToSQS = async (link) => {
 	};
 
 	// default result, When no error has occurred
-	let result = { status: 'success' };
+	let result = { message: 'success' };
 
 	// Send message to SQS queue function
 	await SQS.sendMessage(msg)
@@ -26,7 +26,7 @@ exports.sendToSQS = async (link) => {
 		// SQS Error Handling
 		.catch((err) => {
 			console.log('SQS Send Error');
-			result.status = 'sqserr';
+			result.message = 'sqserr';
 			result.error = err;
 		});
 
@@ -44,7 +44,7 @@ exports.sendToSQS = async (link) => {
 		// DB Error Handling
 		.catch((err) => {
 			console.log('DB Save Error');
-			result.status = 'dberr';
+			result.message = 'dberr';
 			result.error = err;
 		});
 
