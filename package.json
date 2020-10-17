@@ -1,43 +1,42 @@
 {
-  "name": "Forte_Server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "startmon": "npx nodemon -e js,html app.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "apple-auth": "^1.0.6",
-    "aws-sdk": "^2.729.0",
-    "axios": "^0.20.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "nodemon": "^2.0.4",
-    "passport": "^0.4.1",
-    "passport-google-oauth20": "^2.0.0",
-    "passport-jwt": "^4.0.0",
-    "passport-kakao": "^1.0.0",
-    "path": "^0.12.7",
-    "pg": "^8.3.0",
-    "pg-hstore": "^2.3.3",
-    "querystring": "^0.2.0",
-    "request": "^2.88.2",
-    "sequelize": "^6.3.4"
-  },
-  "devDependencies": {
-    "eslint": "^7.11.0",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-config-prettier": "^6.12.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.1.4",
-    "prettier": "2.1.2",
-    "sequelize-cli": "^6.2.0"
-  }
+	"name": "Forte_Server",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node app.js",
+		"startmon": "npx nodemon -e js,html app.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"aws-sdk": "^2.729.0",
+		"axios": "^0.20.0",
+		"dotenv": "^8.2.0",
+		"express": "^4.17.1",
+		"express-session": "^1.17.1",
+		"jsonwebtoken": "^8.5.1",
+		"nodemon": "^2.0.4",
+		"passport": "^0.4.1",
+		"passport-google-oauth20": "^2.0.0",
+		"passport-jwt": "^4.0.0",
+		"passport-kakao": "^1.0.0",
+		"path": "^0.12.7",
+		"pg": "^8.3.0",
+		"pg-hstore": "^2.3.3",
+		"querystring": "^0.2.0",
+		"request": "^2.88.2",
+		"sequelize": "^6.3.4"
+	},
+	"devDependencies": {
+		"eslint": "^7.11.0",
+		"eslint-config-airbnb-base": "^14.2.0",
+		"eslint-config-prettier": "^6.12.0",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-prettier": "^3.1.4",
+		"prettier": "2.1.2",
+		"sequelize-cli": "^6.2.0"
+	}
 }

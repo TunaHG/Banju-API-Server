@@ -8,15 +8,14 @@
 - Client's Banju data creation request
 - Client's Banju data get from db request
 - AI model's Banju data save to db request
+- Client's Music searching request using youtube data api
 
-## API Reference
-- `/musicreg`
-    - POST `/` : Client requests AI Model to convert to banju data(JSON Convention)
-        - The 'link' must be included in the body.
-        - 'link' is a hash value representing a video in Youtube URL
-        ex) '2qtKMC5wzkU' in 'https://www.youtube.com/watch?v=2qtKMC5wzkU'
+## API Reference        
 - `/playmeta`
     - GET `/:link` : Request Banju data for the youtube link given as params
+        - if Banju data does not exist, Request data generation to AI Model
+        - link means youtube videoId
+            - ex) 'videoId' in 'https://www.youtube.com/watch?v={videoId}'
     - POST `/` : Request to save the banju data by AI Model
         - 'link' and 'content' must be included in the body
         - {"link" : "hash of youtube", "content" : .banju}
@@ -29,10 +28,15 @@
     - GET `/me/:id` : Get UserInfo from our service
 
 ## 🔨 How to run  
+### Using AWS Server
+```bash
+http://api.dailybanju.com/
+```
+
 ### Docker Execution
 ```bash
-$> docker pull asdf0185/forte_server:v2.0
-$> docker run -p 3000:3000 asdf0185/forte_server:v
+$> docker pull asdf0185/forte_server:v2.2
+$> docker run -p 3000:3000 asdf0185/forte_server:v2.2
 ```  
 
 ### Native Execution  
@@ -59,32 +63,34 @@ $> npm start (or node app.js)
 ## 📁 Directory Structure
 ```bash
 .
-├── api  # API folder
-│   └── v1  # version 1
-│       ├── musicreg.js  # Client's banju creation request
-│       └── playmeta.js  # Client's banju selection request, AI model's banju save request
-│       └── user.js  # Client's Login, Join, etc API
-├── config  # Configuration folder
-│   ├── config.js  # configuration with dotenv
-│   ├── database.js  # Database Configuration
-│   └── passport.js  # JWT configuration with passport
+├── api                     # API folder
+│   └── v1                  # version 1
+│       ├── search.js       # Client's banju creation request
+│       └── playmeta.js     # Client's banju selection request, AI model's banju save request
+│       └── user.js         # Client's Login, Join, etc API
+├── config                  # Configuration folder
+│   ├── config.js           # configuration with dotenv
+│   ├── database.js         # Database Configuration
+│   └── passport.js         # JWT configuration with passport
 ├── db
-│   ├── migrations  # Sequelize migration folder
-│   ├── models  # Database models folder
-│       ├── index.js  # export all models
-│       ├── Banjus.js  # Table of Chord Sheetmusic data
-│       ├── Practices.js  # Table of user's practice data
-│       ├── Users.js  # Table of user data
-│       ├── Posts.js  # Table of User's Post data
-│       ├── Comments.js  # Table of User's Comment data
-│       └── Follows.js  # Talbe of Follower, Following Relation
+│   ├── migrations          # Sequelize migration folder
+│   ├── models              # Database models folder
+│       ├── index.js        # export all models
+│       ├── Banjus.js       # Table of Chord Sheetmusic data
+│       ├── Practices.js    # Table of user's practice data
+│       ├── Users.js        # Table of user data
+│       ├── Posts.js        # Table of User's Post data
+│       ├── Comments.js     # Table of User's Comment data
+│       └── Follows.js      # Talbe of Follower, Following Relation
 │   └── seeders
-├── services  # Logic of api
-│   ├── musicregService.js  # music registration function
+├── services                # Logic of api
+│   ├── searchService.js    # search music function
 │   ├── playmetaService.js  # find, update banju function
-│   └── userService.js  # function about user CRUD
-├── Dockerfile  # Dockerized project
-├── README.md  # README file
+│   └── userService.js      # function about user CRUD
+├── Dockerfile              # Dockerized project
+├── README.md               # README file
+├── .eslintrc.json          # ESLint Setting
+├── .prettierrc.json        # Prettier Setting
 ├── package.json
 ├── package-lock.json
 └── app.js
