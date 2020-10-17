@@ -3,7 +3,6 @@ const passport = require('passport');
 const config = require('../../config/config');
 const userService = require('../../services/userService');
 const jwt = require('jsonwebtoken');
-// const AppleAuth = require('apple-auth');
 
 const router = express.Router();
 
@@ -42,8 +41,7 @@ router.post('/', async (req, res) => {
  * Join our service with data (email, name)
  */
 router.post('/join', (req, res) => {
-    userService
-        .joinUser(req.body.email, req.body.nickname)
+    userService.joinUser(req.body.email, req.body.nickname)
         .then((result) => {
             if (result != 'JoinError') {
                 const token = jwt.sign({ id: result }, config.jwtsecret);

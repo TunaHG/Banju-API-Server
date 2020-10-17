@@ -64,6 +64,7 @@ router.get("/:link", (req, res) => {
         });
 });
 
+// TODO: AI Model에서 Status를 넘겨줄 예정, Error아니면 정상
 // Save Data to DB, about Convereted Result from AI Model
 /**
  * POST /playmeta
@@ -101,5 +102,7 @@ router.post("/edit", (req, res) => {
             console.log(err);
         });
 });
+
+// TODO: Edit API (추후, AWS rambda로 보내서 결과를 받아야할 수 있음. -noteLeft, Right등 노트가 떨어지는 위치도 변경해줘야 하기 때문)
 
 module.exports = router;

@@ -5,6 +5,7 @@ const config = require('./config/config');
 const musicreg = require('./api/v1/musicreg');
 const playmeta = require('./api/v1/playmeta');
 const user = require('./api/v1/user');
+const search = require('./api/v1/search');
 
 // Sequelize Setting
 const Sequelize = require('sequelize');
@@ -44,6 +45,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 app.use('/musicreg', musicreg);
 app.use('/playmeta', playmeta);
 app.use('/user', user);
+app.use('/search', search);
 
 app.listen(port, (err) => {
     if(err) {
