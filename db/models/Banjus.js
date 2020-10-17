@@ -1,9 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('Banjus', {
         id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV1,
+            primaryKey: true
         },
         // youtube link(true) or wav file(false)
         is_youtube: {
@@ -20,15 +20,6 @@ module.exports = (sequelize, Sequelize) => {
         },
         // Converted Data from AI Model
         content: Sequelize.JSON,
-        // Who Create this Banju?
-        user_id: {
-            type: Sequelize.INTEGER,
-            references: {
-                model: 'Users',
-                key: 'id',
-                deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
-            }
-        },
         // this id derived from parent id
         parent_banju_id: Sequelize.INTEGER,
         // this banju's original id (AI model's )
@@ -47,6 +38,8 @@ module.exports = (sequelize, Sequelize) => {
         // createdAt, updatedAt create!
         timestamps: true,
         // updatedAt does not created
-        updatedAt: false
+        updatedAt: false,
+        // apply snake case on foreign key
+        underscored: true
     });
 };

@@ -20,12 +20,19 @@
     - POST `/` : Request to save the banju data by AI Model
         - 'link' and 'content' must be included in the body
         - {"link" : "hash of youtube", "content" : .banju}
+- `/user`
+    - POST `/` : Get JSON about Check our member or not
+        - type, accesstoken must be included in the body
+        - type : kakao, google, apple
+        - accesstoken : platform's accesstoken (but, apple is authorization code)
+    - POST `/join` : if user is not our member, join user in our service
+    - GET `/me/:id` : Get UserInfo from our service
 
 ## 🔨 How to run  
 ### Docker Execution
 ```bash
-$> docker pull asdf0185/forte_server:v1.2
-$> docker run -p 3000:3000 asdf0185/forte_server:v1.2
+$> docker pull asdf0185/forte_server:v2.0
+$> docker run -p 3000:3000 asdf0185/forte_server:v
 ```  
 
 ### Native Execution  
@@ -56,16 +63,26 @@ $> npm start (or node app.js)
 │   └── v1  # version 1
 │       ├── musicreg.js  # Client's banju creation request
 │       └── playmeta.js  # Client's banju selection request, AI model's banju save request
+│       └── user.js  # Client's Login, Join, etc API
 ├── config  # Configuration folder
-│   └── config.js  # configuration with dotenv
-├── models  # Database models folder
-│   ├── index.js  # export all models
-│   ├── Banjus.js  # Table of Chord Sheetmusic data
-│   ├── Practices.js  # Table of user's practice data
-│   └── Users.js  # Table of user data
+│   ├── config.js  # configuration with dotenv
+│   ├── database.js  # Database Configuration
+│   └── passport.js  # JWT configuration with passport
+├── db
+│   ├── migrations  # Sequelize migration folder
+│   ├── models  # Database models folder
+│       ├── index.js  # export all models
+│       ├── Banjus.js  # Table of Chord Sheetmusic data
+│       ├── Practices.js  # Table of user's practice data
+│       ├── Users.js  # Table of user data
+│       ├── Posts.js  # Table of User's Post data
+│       ├── Comments.js  # Table of User's Comment data
+│       └── Follows.js  # Talbe of Follower, Following Relation
+│   └── seeders
 ├── services  # Logic of api
 │   ├── musicregService.js  # music registration function
-│   └── playmetaService.js  # find, update banju function
+│   ├── playmetaService.js  # find, update banju function
+│   └── userService.js  # function about user CRUD
 ├── Dockerfile  # Dockerized project
 ├── README.md  # README file
 ├── package.json
