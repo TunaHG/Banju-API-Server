@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
             q: keyword,
             type: 'video',
             key: config.googleapikey,
-            maxResults: '5',
+            maxResults: '20',
             topicId: '/m/04rlf'
         }
     }
@@ -59,7 +59,9 @@ router.get('/', (req, res) => {
             //         res.send(result);
             //     });
 
+            let resultjson = {};
             let result = [];
+            resultjson.nextPageToken = data.nextPageToken;
             for (const element of items) {
                 let tmp = {};
                 tmp.id = element.id.videoId;
@@ -103,7 +105,8 @@ router.get('/', (req, res) => {
                     })
                 result.push(tmp);
             }
-            res.send(result);
+            resultjson.items = result;
+            res.send(resultjson);
         })
         .catch((err) => {
             console.log("Axios request Error in Youtube Data API")
