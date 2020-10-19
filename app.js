@@ -23,8 +23,7 @@ Sentry.init({
         new Sentry.Integrations.Http({ tracing: true }),
         new Tracing.Integrations.Express({ app }),
     ],
-    tracesSampleRate: 1.0,
-    debug: false
+    tracesSampleRate: 1.0
 });
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
@@ -57,6 +56,7 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 });
 app.use(Sentry.Handlers.errorHandler());
 
+// TODO: Sentry로 sequelize log들 뜨는거 수정해야함
 // Optional fallthrough error handler
 app.use(function onError(err, req, res, next) {
     // The error id is attached to `res.sentry` to be returned
