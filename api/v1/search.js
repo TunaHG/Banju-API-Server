@@ -26,7 +26,8 @@ router.get('/:keyword', (req, res) => {
             type: 'video',
             key: config.googleapikey,
             maxResults: '20',
-            topicId: '/m/04rlf'
+            topicId: '/m/04rlf',
+            regionCode: 'KR'
         }
     }
 
