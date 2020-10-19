@@ -1,5 +1,6 @@
 const express = require("express");
 const playmetaService = require("../../services/playmetaService");
+const Sentry = require('@sentry/node');
 
 const router = express.Router();
 
@@ -100,14 +101,12 @@ router.post("/", (req, res) => {
 
 // TODO: Need update edit API (Error handling)
 // Edit Banju content about user customizig banju
-router.post("/edit", (req, res) => {
+router.post("/edit", (req, res, next) => {
     playmetaService.editBanju(req.body.id, req.body.content)
         .then((data) => {
             res.status(200).send({ message: data });
         })
-        .catch((err) => {
-            console.log(err);
-        });
+        .catch(next);
 });
 
 // TODO: Edit API (추후, AWS rambda로 보내서 결과를 받아야할 수 있음. -noteLeft, Right등 노트가 떨어지는 위치도 변경해줘야 하기 때문)

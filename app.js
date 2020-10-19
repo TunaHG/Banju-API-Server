@@ -24,6 +24,7 @@ Sentry.init({
         new Tracing.Integrations.Express({ app }),
     ],
     tracesSampleRate: 1.0,
+    debug: false
 });
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
@@ -41,14 +42,6 @@ const passport = require('passport');
 const passportConfig = require('./config/passport');
 passportConfig();
 
-const session = require('express-session');
-
-app.use(session({
-    secret: config.sessionsecret,
-    cookie: { maxAge: 60 * 60 * 1000 },
-    resave: true,
-    saveUninitialized: false
-}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -59,6 +52,9 @@ app.use('/playmeta', playmeta);
 app.use('/user', user);
 app.use('/search', search);
 
+app.get("/debug-sentry", function mainHandler(req, res) {
+    throw new Error("My first Sentry error!");
+});
 app.use(Sentry.Handlers.errorHandler());
 
 // Optional fallthrough error handler
@@ -66,6 +62,7 @@ app.use(function onError(err, req, res, next) {
     // The error id is attached to `res.sentry` to be returned
     // and optionally displayed to the user for support.
     res.statusCode = 500;
+    console.log(err);
     res.end(res.sentry + "\n");
 });
 
