@@ -54,12 +54,12 @@ router.get("/:link", (req, res) => {
                 resultjson.status = 'working';
                 resultjson.content = content;
                 console.log(`Conversion working in ${content.progress}%`);
-                let standardTime = new Date();
-                if (content.startTime < new Date(standardTime.setMinutes(standardTime.getMinutes() - 2)){
-                    await playmetaService.sendToSQS(link);
-                    resultjson = {};
-                    resultjson.status = 'restart';
-                }
+                // let standardTime = new Date();
+                // if (content.startTime < new Date(standardTime.setMinutes(standardTime.getMinutes() - 2)){
+                //     await playmetaService.sendToSQS(link);
+                //     resultjson = {};
+                //     resultjson.status = 'restart';
+                // }
                 res.status(200).send(resultjson);
             }
         })
