@@ -1,6 +1,5 @@
 const express = require("express");
 const playmetaService = require("../../services/playmetaService");
-const Sentry = require('@sentry/node');
 
 const router = express.Router();
 
@@ -13,7 +12,7 @@ const router = express.Router();
  * 
  * link: Youtube Link what you want to convert
  */
-router.get("/:link", (req, res) => {
+router.get("/:link", (req, res, next) => {
     const link = req.params.link;
     const resultjson = {};
     // TODO: AI Model에서 Error가 발생하여 Row는 남아있는데, Content는 업데이트가 안되는 상황 Handling
@@ -64,12 +63,7 @@ router.get("/:link", (req, res) => {
                 res.status(200).send(resultjson);
             }
         })
-        .catch(async (err) => {
-            console.log('Error occur in findBanju Func');
-            console.log(err);
-            resultjson.status = 'Error';
-            res.status(400).send(resultjson);
-        });
+        .catch(next);
 });
 
 // TODO: AI Model에서 Status를 넘겨줄 예정, Error아니면 정상
@@ -77,7 +71,7 @@ router.get("/:link", (req, res) => {
 /**
  * POST /playmeta
  */
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
     playmetaService.updateBanju(req.body.link, req.body.content)
         .then((update) => {
             console.log("number of row updated: ", update);
@@ -93,10 +87,7 @@ router.post("/", (req, res) => {
             }
         })
         // DB Update query Error Handling
-        .catch((err) => {
-            console.log("POST /playmeta Failed. update query error");
-            res.status(400).send({ message: "Error", error: err });
-        });
+        .catch(next);
 });
 
 // TODO: Need update edit API (Error handling)

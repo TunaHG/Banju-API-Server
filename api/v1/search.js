@@ -7,7 +7,7 @@ const playmetaService = require('../../services/playmetaService');
 const router = express.Router();
 
 // http://api.dailybanju.com/search/다이너마이트/date/
-router.get('/:keyword', (req, res) => {
+router.get('/:keyword', (req, res, next) => {
     const keyword = req.params.keyword;
     // order: date, rating, relevance, title, videoCount, viewCount (default: relevance)
     const order = req.query.order;
@@ -109,11 +109,7 @@ router.get('/:keyword', (req, res) => {
             resultjson.items = result;
             res.send(resultjson);
         })
-        .catch((err) => {
-            console.log("Axios request Error in Youtube Data API")
-            console.log(err);
-            res.send({ status: 'Error', error: err });
-        });
+        .catch(next);
 })
 
 module.exports = router;
