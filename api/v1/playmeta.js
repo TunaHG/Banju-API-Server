@@ -16,6 +16,7 @@ router.get("/:link", (req, res) => {
     const link = req.params.link;
     const resultjson = {};
     // TODO: AI Model에서 Error가 발생하여 Row는 남아있는데, Content는 업데이트가 안되는 상황 Handling
+    // TODO: res.status() 규칙 공부하여 추가
     // SQL Select query function
     playmetaService.findBanju(link)
         .then(async (content) => {
@@ -23,7 +24,7 @@ router.get("/:link", (req, res) => {
                 // TODO: null인 경우가 없지않나 이제?
                 resultjson.status = "working";
                 console.log("Conversion working.");
-                res.status(102).send(resultjson);
+                res.status(200).send(resultjson);
             }
             // Select Query result have 0 row
             else if (content === 0) {
@@ -32,7 +33,7 @@ router.get("/:link", (req, res) => {
 
                 resultjson.data = sqsdata;
                 console.log('Music regist result: ', sqsdata);
-                res.status(100).send(resultjson);
+                res.status(200).send(resultjson);
             }
             // Finish Conversion from AI Model
             else if (content.status === "success") {
@@ -46,21 +47,27 @@ router.get("/:link", (req, res) => {
                 playmetaService.deleteBanju(req.params.link);
                 resultjson.status = "Error";
                 console.log("Conversion error");
-                res.status(205).send(resultjson);
+                res.status(200).send(resultjson);
             }
             // Conversion progress is working
             else {
                 resultjson.status = 'working';
                 resultjson.content = content;
-                console.log(`Conversion working in ${content}%`);
-                res.status(102).send(resultjson);
+                console.log(`Conversion working in ${content.progress}%`);
+                let standardTime = new Date();
+                if (content.startTime < new Date(standardTime.setMinutes(standardTime.getMinutes() - 2)){
+                    await playmetaService.sendToSQS(link);
+                    resultjson = {};
+                    resultjson.status = 'restart';
+                }
+                res.status(200).send(resultjson);
             }
         })
         .catch(async (err) => {
             console.log('Error occur in findBanju Func');
             console.log(err);
             resultjson.status = 'Error';
-            res.status(420).send(resultjson);
+            res.status(400).send(resultjson);
         });
 });
 
@@ -76,7 +83,7 @@ router.post("/", (req, res) => {
             // if update == 0, Means that no row has been updated
             if (update === 0) {
                 console.log("POST /playmeta Failed. there are no updated rows");
-                res.status(204).send({ message: "fail" });
+                res.status(200).send({ message: "fail" });
             }
             // update success
             else {
@@ -87,7 +94,7 @@ router.post("/", (req, res) => {
         // DB Update query Error Handling
         .catch((err) => {
             console.log("POST /playmeta Failed. update query error");
-            res.status(420).send({ message: "Error", error: err });
+            res.status(400).send({ message: "Error", error: err });
         });
 });
 
