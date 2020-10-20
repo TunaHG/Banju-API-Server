@@ -1,5 +1,6 @@
 const express = require("express");
 const playmetaService = require("../../services/playmetaService");
+const searchService = require('../../services/searchService');
 const Sentry = require('@sentry/node');
 
 const router = express.Router();
@@ -19,7 +20,7 @@ router.get("/:link", (req, res, next) => {
     // TODO: AI Model에서 Error가 발생하여 Row는 남아있는데, Content는 업데이트가 안되는 상황 Handling
     // SQL Select query function
     playmetaService.findBanju(link)
-        .then(async (content) => {
+        .then((content) => {
             if (content === null) {
                 // TODO: null인 경우가 없지않나 이제?
                 resultjson.status = "working";
@@ -28,12 +29,23 @@ router.get("/:link", (req, res, next) => {
             }
             // Select Query result have 0 row
             else if (content === 0) {
-                resultjson.status = 'working';
-                const sqsdata = await playmetaService.sendToSQS(link);
+                searchService.getDuration(link)
+                    .then(async (videoDuration) => {
+                        const minute = Number(((videoDuration.split('T'))[1].split('M'))[0]);
+                        if (minute < 15) {
+                            resultjson.status = 'working';
+                            const sqsdata = await playmetaService.sendToSQS(link);
 
-                resultjson.data = sqsdata.message;
-                console.log('Music regist result: ', sqsdata);
-                res.status(200).send(resultjson);
+                            resultjson.data = sqsdata.message;
+                            console.log('Music regist result: ', sqsdata);
+                        } else {
+                            resultjson.status = 'error';
+                            resultjson.content = { message: 'videoDuration must be 15 or less' };
+                            console.log('Error with videoDuration of 15 or more');
+                        }
+                        res.status(200).send(resultjson);
+                    })
+                    .catch(next);
             }
             // Finish Conversion from AI Model
             else if (content.status === "success") {
