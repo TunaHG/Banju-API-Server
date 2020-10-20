@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
         result = await userService.googlelogin(author);
     }
     else if (type === 'apple') {
-        result = await userService.applelogin(author);
+        result = await userService.applelogin(req.body.accessToken);
     }
 
     console.log(result);
