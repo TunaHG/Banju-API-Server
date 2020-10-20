@@ -63,7 +63,7 @@ app.use(function onError(err, req, res, next) {
     // and optionally displayed to the user for support.
     res.statusCode = 500;
     console.log(err);
-    res.end(res.sentry + "\n");
+    res.send({ message: 'error', error: err.message });
 });
 
 app.listen(port, (err) => {
