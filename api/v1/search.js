@@ -50,64 +50,10 @@ router.get('/:keyword', (req, res, next) => {
     //     option.params.pageToken = pageToken;
     // }
 
-    axios.request(option)
-        .then(async ({ data }) => {
-            console.log('first resolve()');
-            const items = data.items;
-            console.log(items.length);
-            // searchService.getDataFromitems(items)
-            //     .then((result) => {
-            //         res.send(result);
-            //     });
-
-            let resultjson = {};
-            let result = [];
-            resultjson.nextPageToken = data.nextPageToken;
-            for (const element of items) {
-                let tmp = {};
-                tmp.id = element.id.videoId;
-                tmp.title = element.snippet.title;
-                tmp.thumbnail = element.snippet.thumbnails.default;
-                await playmetaService.findBanju(tmp.id)
-                    .then((result) => {
-                        // TODO: Banju의 Scale 추가
-                        if (result === 0) {
-                            tmp.convert = 'Need Banju';
-                        }
-                        else if (result === null) {
-                            tmp.convert = 'Banjuing';
-                        }
-                        else {
-                            tmp.convert = 'Banjued';
-                        }
-                    })
-                    .catch((err) => {
-                        console.log('findBanju Function error in search API');
-                        console.log(err);
-                    });
-                const option = {
-                    method: 'GET',
-                    url: 'https://www.googleapis.com/youtube/v3/videos',
-                    params: {
-                        key: config.googleapikey,
-                        id: tmp.id,
-                        part: 'contentDetails'
-                    }
-                }
-                await axios.request(option)
-                    .then(({ data }) => {
-                        const items = data.items;
-                        tmp.duration = items[0].contentDetails.duration;
-                    })
-                    .catch((err) => {
-                        console.log('video contentDetails api error')
-                        console.log(err);
-                        tmp.duration = 'PT0M00S';
-                    })
-                result.push(tmp);
-            }
-            resultjson.items = result;
-            res.send(resultjson);
+    searchService.searchDatas(option)
+        .then((result) => {
+            console.log('Success data search');
+            res.status(200).send(result);
         })
         .catch(next);
 })
