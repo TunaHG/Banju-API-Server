@@ -31,8 +31,9 @@ router.get("/:link", (req, res, next) => {
             else if (content === 0) {
                 searchService.getDuration(link)
                     .then(async (videoDuration) => {
-                        const minute = Number(((videoDuration.split('T'))[1].split('M'))[0]);
-                        if (minute < 15) {
+                        const checkHour = videoDuration.indexOf('H');
+                        const minute = videoDuration.match(/\d+(?=M)/);
+                        if (checkHour === -1 && minute < 15) {
                             resultjson.status = 'working';
                             const sqsdata = await playmetaService.sendToSQS(link);
 
@@ -79,7 +80,6 @@ router.get("/:link", (req, res, next) => {
         .catch(next);
 });
 
-// TODO: AI Model에서 Status를 넘겨줄 예정, Error아니면 정상
 // Save Data to DB, about Convereted Result from AI Model
 /**
  * POST /playmeta
@@ -105,7 +105,7 @@ router.post("/", (req, res, next) => {
 
 router.delete('/', (req, res, next) => {
     playmetaService.deleteBanju(req.body.link)
-        .then((data) => {
+        .then(() => {
             console.log('Banju Delete!');
             res.status(200).send({ message: 'delete success' });
         })

@@ -1,8 +1,6 @@
 const express = require('express');
 const config = require('../../config/config');
-const axios = require('axios');
 const searchService = require('../../services/searchService');
-const playmetaService = require('../../services/playmetaService');
 
 const router = express.Router();
 
