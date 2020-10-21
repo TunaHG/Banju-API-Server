@@ -27,6 +27,7 @@ exports.searchDatas = (option) => {
                             }
                             else {
                                 tmp.convert = 'Banjued';
+                                tmp.scale = result.meta.scale;
                             }
                         })
                         .catch((err) => {
@@ -34,7 +35,6 @@ exports.searchDatas = (option) => {
                             console.log(err);
                             reject(err);
                         });
-                    tmp.duration = await this.getDuration(tmp.id);
                     result.push(tmp);
                 };
                 resultjson.items = result;
