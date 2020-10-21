@@ -16,6 +16,7 @@
         - if Banju data does not exist, Request data generation to AI Model
         - link means youtube videoId
             - ex) 'videoId' in 'https://www.youtube.com/watch?v={videoId}'
+        - if youtube video is longer than 15 minutes, error occur
     - POST `/` : Request to save the banju data by AI Model
         - 'link' and 'content' must be included in the body
         - {"link" : "hash of youtube", "content" : .banju}
@@ -26,6 +27,15 @@
         - accesstoken : platform's accesstoken (but, apple is authorization code)
     - POST `/join` : if user is not our member, join user in our service
     - GET `/me/:id` : Get UserInfo from our service
+- `/search`
+    - GET `/:keyword` : Get Search list from youtube data api
+        - order, publishedAfter, videoDuration, pageToken available
+        - order: date, rating, relevance, title, videoCoutn, viewCount
+            - default: relevance
+        - publishedAfter: some day before if you want to search
+            - ex) 1, 3, 7, 30, ...etc
+        - videoDuration: any, long(>20m), medium(>4m, <20m), short(<4m)
+        - pageToken: nextPageToken
 
 ## 🔨 How to run  
 ### Using AWS Server
@@ -35,8 +45,8 @@ http://api.dailybanju.com/
 
 ### Docker Execution
 ```bash
-$> docker pull asdf0185/forte_server:v2.2
-$> docker run -p 3000:3000 asdf0185/forte_server:v2.2
+$> docker pull asdf0185/forte_server:v1.0.0
+$> docker run -p 80:3000 asdf0185/forte_server:v1.0.0
 ```  
 
 ### Native Execution  
@@ -65,8 +75,8 @@ $> npm start (or node app.js)
 .
 ├── api                     # API folder
 │   └── v1                  # version 1
-│       ├── search.js       # Client's banju creation request
-│       └── playmeta.js     # Client's banju selection request, AI model's banju save request
+│       ├── playmeta.js     # Client's banju selection request, AI model's banju save request
+│       └── search.js       # Client's banju creation request
 │       └── user.js         # Client's Login, Join, etc API
 ├── config                  # Configuration folder
 │   ├── config.js           # configuration with dotenv
@@ -91,6 +101,9 @@ $> npm start (or node app.js)
 ├── README.md               # README file
 ├── .eslintrc.json          # ESLint Setting
 ├── .prettierrc.json        # Prettier Setting
+├── .sequelizerc.json       # Sequelize Setting
+├── .gitignore              # Git Ignore Setting
+├── .dockerignore           # Docker Ignore Setting
 ├── package.json
 ├── package-lock.json
 └── app.js
