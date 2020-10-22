@@ -1,5 +1,7 @@
 const express = require("express");
 const playmetaService = require("../../services/playmetaService");
+const searchService = require('../../services/searchService');
+const Sentry = require('@sentry/node');
 
 const router = express.Router();
 
@@ -12,27 +14,39 @@ const router = express.Router();
  * 
  * link: Youtube Link what you want to convert
  */
-router.get("/:link", (req, res) => {
+router.get("/:link", (req, res, next) => {
     const link = req.params.link;
     const resultjson = {};
     // TODO: AI Model에서 Error가 발생하여 Row는 남아있는데, Content는 업데이트가 안되는 상황 Handling
     // SQL Select query function
     playmetaService.findBanju(link)
-        .then(async (content) => {
+        .then((content) => {
             if (content === null) {
                 // TODO: null인 경우가 없지않나 이제?
                 resultjson.status = "working";
                 console.log("Conversion working.");
-                res.status(102).send(resultjson);
+                res.status(200).send(resultjson);
             }
             // Select Query result have 0 row
             else if (content === 0) {
-                resultjson.status = 'Banjuing Start';
-                const sqsdata = await playmetaService.sendToSQS(link);
+                searchService.getDuration(link)
+                    .then(async (videoDuration) => {
+                        const checkHour = videoDuration.indexOf('H');
+                        const minute = videoDuration.match(/\d+(?=M)/);
+                        if (checkHour === -1 && minute < 15) {
+                            resultjson.status = 'working';
+                            const sqsdata = await playmetaService.sendToSQS(link);
 
-                resultjson.data = sqsdata;
-                console.log('Music regist result: ', sqsdata);
-                res.status(100).send(resultjson);
+                            resultjson.data = sqsdata.message;
+                            console.log('Music regist result: ', sqsdata);
+                        } else {
+                            resultjson.status = 'error';
+                            resultjson.content = { message: 'videoDuration must be 15 or less' };
+                            console.log('Error with videoDuration of 15 or more');
+                        }
+                        res.status(200).send(resultjson);
+                    })
+                    .catch(next);
             }
             // Finish Conversion from AI Model
             else if (content.status === "success") {
@@ -44,63 +58,68 @@ router.get("/:link", (req, res) => {
             // Conversion Error from AI Model
             else if (content.status === 'error') {
                 playmetaService.deleteBanju(req.params.link);
-                resultjson.status = "Error";
+                resultjson.status = "error";
                 console.log("Conversion error");
-                res.status(205).send(resultjson);
+                Sentry.captureException(resultjson);
+                res.status(200).send(resultjson);
             }
             // Conversion progress is working
             else {
                 resultjson.status = 'working';
                 resultjson.content = content;
-                console.log(`Conversion working in ${content}%`);
-                res.status(102).send(resultjson);
+                console.log(`Conversion working in ${content.progress}%`);
+                // let standardTime = new Date();
+                // if (content.startTime < new Date(standardTime.setMinutes(standardTime.getMinutes() - 2)){
+                //     await playmetaService.sendToSQS(link);
+                //     resultjson = {};
+                //     resultjson.status = 'restart';
+                // }
+                res.status(200).send(resultjson);
             }
         })
-        .catch(async (err) => {
-            console.log('Error occur in findBanju Func');
-            console.log(err);
-            resultjson.status = 'Error';
-            res.status(420).send(resultjson);
-        });
+        .catch(next);
 });
 
-// TODO: AI Model에서 Status를 넘겨줄 예정, Error아니면 정상
 // Save Data to DB, about Convereted Result from AI Model
 /**
  * POST /playmeta
  */
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
     playmetaService.updateBanju(req.body.link, req.body.content)
         .then((update) => {
             console.log("number of row updated: ", update);
             // if update == 0, Means that no row has been updated
             if (update === 0) {
                 console.log("POST /playmeta Failed. there are no updated rows");
-                res.status(204).send({ message: "fail" });
+                res.status(200).send({ message: "update fail" });
             }
             // update success
             else {
                 console.log("POST /playmeta Success");
-                res.status(200).send({ message: "success" });
+                res.status(200).send({ message: "update success" });
             }
         })
         // DB Update query Error Handling
-        .catch((err) => {
-            console.log("POST /playmeta Failed. update query error");
-            res.status(420).send({ message: "Error", error: err });
-        });
+        .catch(next);
+});
+
+router.delete('/', (req, res, next) => {
+    playmetaService.deleteBanju(req.body.link)
+        .then(() => {
+            console.log('Banju Delete!');
+            res.status(200).send({ message: 'delete success' });
+        })
+        .catch(next);
 });
 
 // TODO: Need update edit API (Error handling)
 // Edit Banju content about user customizig banju
-router.post("/edit", (req, res) => {
+router.post("/edit", (req, res, next) => {
     playmetaService.editBanju(req.body.id, req.body.content)
         .then((data) => {
             res.status(200).send({ message: data });
         })
-        .catch((err) => {
-            console.log(err);
-        });
+        .catch(next);
 });
 
 // TODO: Edit API (추후, AWS rambda로 보내서 결과를 받아야할 수 있음. -noteLeft, Right등 노트가 떨어지는 위치도 변경해줘야 하기 때문)

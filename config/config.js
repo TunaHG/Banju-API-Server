@@ -19,4 +19,6 @@ config.jwtsecret = process.env.JWT_SECRET;
 
 config.databaseurl = process.env.DEV_DATABASE_URL;
 
+config.sentrydsn = process.env.SENTRY_DSN;
+
 module.exports = config;

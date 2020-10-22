@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
         result = await userService.googlelogin(author);
     }
     else if (type === 'apple') {
-        result = await userService.applelogin(author);
+        result = await userService.applelogin(req.body.accessToken);
     }
 
     console.log(result);
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
  * Join API
  * Join our service with data (email, name)
  */
-router.post('/join', (req, res) => {
+router.post('/join', (req, res, next) => {
     userService.joinUser(req.body.email, req.body.nickname)
         .then((result) => {
             if (result != 'JoinError') {
@@ -50,10 +50,7 @@ router.post('/join', (req, res) => {
                 return res.send({ message: 'Error' });
             }
         })
-        .catch((err) => {
-            console.log('Error in Join');
-            return res.send({ message: 'Error' });
-        });
+        .catch(next);
 });
 
 /*
@@ -63,15 +60,12 @@ router.post('/join', (req, res) => {
  *
  * TODO: 세션으로 넘어오는 JWT decode해서 사용
  */
-router.get('/me/:id', (req, res) => {
+router.get('/me/:id', (req, res, next) => {
     userService.getUserInfo(req.params.id)
         .then((result) => {
             return res.send({ status: 'success', data: result });
         })
-        .catch((err) => {
-            console.log('Error in /user/me API');
-            return res.send({ status: 'error' })
-        })
+        .catch(next)
 });
 
 module.exports = router;

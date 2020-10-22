@@ -3,26 +3,14 @@ const config = require('../config/config');
 const playmetaService = require('../services/playmetaService');
 const axios = require('axios');
 
-exports.searchDatas = (keyword) => {
+exports.searchDatas = (option) => {
     return new Promise((resolve, reject) => {
-        const option = {
-            method: 'GET',
-            url: 'https://www.googleapis.com/youtube/v3/search',
-            params: {
-                part: 'snippet',
-                q: keyword,
-                type: 'video',
-                key: config.googleapikey,
-                maxResults: '10',
-                order: 'relevance',
-                topicId: '/m/04rlf'
-            }
-        }
-
         axios.request(option)
             .then(async ({ data }) => {
                 const items = data.items;
+                let resultjson = {};
                 let result = [];
+                resultjson.nextPageToken = data.nextPageToken;
                 for (const element of items) {
                     let tmp = {};
                     tmp.id = element.id.videoId;
@@ -39,18 +27,47 @@ exports.searchDatas = (keyword) => {
                             }
                             else {
                                 tmp.convert = 'Banjued';
+                                tmp.scale = result.meta.scale;
                             }
                         })
                         .catch((err) => {
                             console.log('findBanju Function error in search API');
                             console.log(err);
-                        })
+                            reject(err);
+                        });
                     result.push(tmp);
                 };
-                resolve(result);
+                resultjson.items = result;
+                resolve(resultjson);
             })
             .catch((err) => {
                 reject(err);
             })
+    });
+};
+
+exports.getDuration = (videoId) => {
+    return new Promise((resolve, reject) => {
+        const option = {
+            method: 'GET',
+            url: 'https://www.googleapis.com/youtube/v3/videos',
+            params: {
+                key: config.googleapikey,
+                id: videoId,
+                part: 'contentDetails'
+            }
+        }
+
+        axios.request(option)
+            .then(({ data }) => {
+                const items = data.items;
+                console.log('Get videoDuration from youtube api');
+                resolve(items[0].contentDetails.duration);
+            })
+            .catch((err) => {
+                console.log('error from axios about video contentDetails api');
+                console.log(err.message);
+                resolve('PT0M00S');
+            });
     });
 };

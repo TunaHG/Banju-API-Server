@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'test';
+const env = process.env.NODE_ENV || 'production';
 const config = require('../../config/database.js')[env];
 const db = {};
 
@@ -46,7 +46,7 @@ db.Comments.belongsTo(db.Posts, { foreignKey: 'post_id', sourceKey: 'id' });
 db.Users.hasMany(db.Follows, { foreignKey: 'user_id', sourceKey: 'id' });
 db.Follows.belongsTo(db.Users, { foreignKey: 'user_id', sourceKey: 'id' });
 db.Users.hasMany(db.Follows, { foreignKey: 'follow_user_id', sourceKey: 'id' });
-db.Follows.belongsTo(db.Users, { foreignKey:' follow_user_id', sourceKey: 'id' });
+db.Follows.belongsTo(db.Users, { foreignKey: ' follow_user_id', sourceKey: 'id' });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
