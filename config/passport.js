@@ -18,7 +18,7 @@ module.exports = () => {
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey: config.jwtsecret
     }, (jwtPayload, done) => {
-        if (jwtPayload.auth !== 'http://api.dailybanju.com') {
+        if (jwtPayload.iss !== 'http://api.dailybanju.com') {
             return done('error: auth invalid');
         }
         return models.Users.findByPk(jwtPayload.id)

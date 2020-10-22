@@ -1,11 +1,12 @@
 const express = require('express');
 const config = require('../../config/config');
 const searchService = require('../../services/searchService');
+const passport = require('passport');
 
 const router = express.Router();
 
 // http://api.dailybanju.com/search/다이너마이트/date/
-router.get('/:keyword', (req, res, next) => {
+router.get('/:keyword', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     const keyword = req.params.keyword;
     // order: date, rating, relevance, title, videoCount, viewCount (default: relevance)
     const order = req.query.order;
@@ -54,6 +55,6 @@ router.get('/:keyword', (req, res, next) => {
             res.status(200).send(result);
         })
         .catch(next);
-})
+});
 
 module.exports = router;

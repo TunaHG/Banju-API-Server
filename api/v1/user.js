@@ -14,8 +14,6 @@ const router = express.Router();
  *
  * Type : kakao, google, apple
  * accessToken : Each type's Login Authenticate accesstoken
- *
- * TODO: Type분기를 Service의 function으로 변경
  */
 router.post('/', async (req, res) => {
     const type = req.body.type;
@@ -41,14 +39,10 @@ router.post('/', async (req, res) => {
  * Join our service with data (email, name)
  */
 router.post('/join', (req, res, next) => {
-    userService.joinUser(req.body.email, req.body.nickname)
+    userService.joinUser(req.body.email)
         .then((result) => {
-            if (result != 'JoinError') {
-                const token = jwt.sign({ id: result }, config.jwtsecret);
-                return res.send({ message: 'Success', token });
-            } else {
-                return res.send({ message: 'Error' });
-            }
+            const token = jwt.sign({ id: result, iss: 'http://api.dailybanju.com' }, config.jwtsecret);
+            return res.send({ message: 'Success', token });
         })
         .catch(next);
 });
@@ -60,8 +54,8 @@ router.post('/join', (req, res, next) => {
  *
  * TODO: 세션으로 넘어오는 JWT decode해서 사용
  */
-router.get('/me/:id', (req, res, next) => {
-    userService.getUserInfo(req.params.id)
+router.get('/me', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    userService.getUserInfo(req.user.id)
         .then((result) => {
             return res.send({ status: 'success', data: result });
         })

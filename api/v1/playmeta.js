@@ -2,6 +2,7 @@ const express = require("express");
 const playmetaService = require("../../services/playmetaService");
 const searchService = require('../../services/searchService');
 const Sentry = require('@sentry/node');
+const passport = require('passport');
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const router = express.Router();
  * 
  * link: Youtube Link what you want to convert
  */
-router.get("/:link", (req, res, next) => {
+router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res, next) => {
     const link = req.params.link;
     const resultjson = {};
     // TODO: AI Model에서 Error가 발생하여 Row는 남아있는데, Content는 업데이트가 안되는 상황 Handling
@@ -114,7 +115,7 @@ router.delete('/', (req, res, next) => {
 
 // TODO: Need update edit API (Error handling)
 // Edit Banju content about user customizig banju
-router.post("/edit", (req, res, next) => {
+router.post("/edit", passport.authenticate('jwt', { session: false }), (req, res, next) => {
     playmetaService.editBanju(req.body.id, req.body.content)
         .then((data) => {
             res.status(200).send({ message: data });

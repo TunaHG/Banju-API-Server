@@ -3,19 +3,21 @@ const models = require('../db/models');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
-exports.joinUser = async (email) => {
-    await models.Users.create({
-        email: email,
+exports.joinUser = (email) => {
+    return new Promise((resolve, reject) => {
+        models.Users.create({
+            email: email,
+        })
+            .then((user) => {
+                user.save();
+                console.log("User Join Success");
+                resolve(user.id);
+            })
+            .catch((err) => {
+                console.log("User Join Failed", err);
+                reject();
+            })
     })
-        .then((user) => {
-            user.save();
-            console.log("User Join Success");
-            return user.id;
-        })
-        .catch((err) => {
-            console.log("User Join Failed", err);
-            return 'joinerror'
-        })
 };
 
 exports.checkJoined = async (email) => {
@@ -48,18 +50,20 @@ exports.checkJoined = async (email) => {
 };
 
 exports.getUserInfo = (id) => {
-    models.Users.findOne({
-        where: {
-            id: id
-        }
+    return new Promise((resolve, reject) => {
+        models.Users.findOne({
+            where: {
+                id: id
+            }
+        })
+            .then((data) => {
+                resolve(data.dataValues);
+            })
+            .catch((err) => {
+                console.log("getUserInfo()'s Error occur");
+                reject(err);
+            })
     })
-        .then((data) => {
-            return data.dataValues;
-        })
-        .catch((err) => {
-            console.log("getUserInfo()'s Error occur");
-            return err;
-        })
 };
 
 exports.kakaologin = (author) => {
@@ -81,7 +85,7 @@ exports.kakaologin = (author) => {
                             this.joinUser(kakaoInfo.email)
                                 .then((id) => {
                                     if (id != 'joinerror') {
-                                        const token = jwt.sign({ id: id, auth: 'http://api.dailybanju.com' }, config.jwtsecret);
+                                        const token = jwt.sign({ id: id, iss: 'http://api.dailybanju.com' }, config.jwtsecret);
                                         resolve({ message: 'not user', token });
                                     }
                                     else {
@@ -97,7 +101,7 @@ exports.kakaologin = (author) => {
                             reject();
                         }
                         else {
-                            const token = jwt.sign({ id: userId, auth: 'http://api.dailybanju.com' }, config.jwtsecret);
+                            const token = jwt.sign({ id: userId, iss: 'http://api.dailybanju.com' }, config.jwtsecret);
                             resolve({ message: 'already user', token });
                         }
                     })
@@ -137,7 +141,7 @@ exports.googlelogin = (author) => {
                             this.joinUser(data.email)
                                 .then((id) => {
                                     if (id != 'joinerror') {
-                                        const token = jwt.sign({ id: id, auth: 'http://api.dailybanju.com' }, config.jwtsecret);
+                                        const token = jwt.sign({ id: id, iss: 'http://api.dailybanju.com' }, config.jwtsecret);
                                         resolve({ message: 'not user', token });
                                     }
                                     else {
