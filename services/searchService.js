@@ -16,7 +16,7 @@ exports.searchDatas = (option) => {
                     tmp.id = element.id.videoId;
                     tmp.title = element.snippet.title;
                     tmp.thumbnail = element.snippet.thumbnails.default;
-                    await playmetaService.findBanju(tmp.id)
+                    await playmetaService.findBanjuByLink(tmp.id)
                         .then((result) => {
                             // TODO: Banju의 Scale 추가
                             if (result === 0) {
