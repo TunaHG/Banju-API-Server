@@ -61,10 +61,14 @@ exports.findBanjuByLink = (link) => {
                 link: link,
             },
         })
-            .then(({ dataValues }) => {
+            .then((data) => {
                 console.log('find Banju by link query success');
-                dataValues.content.id = dataValues.id;
-                resolve(dataValues.content);
+                if (data === null) {
+                    resolve(null);
+                } else {
+                    data.dataValues.content.id = data.dataValues.id;
+                    resolve(data.dataValues.content);
+                }
             })
             .catch((err) => {
                 reject(err);
@@ -80,10 +84,14 @@ exports.findBanjuById = (banjuId) => {
                 id: banjuId
             }
         })
-            .then(({ dataValues }) => {
+            .then((data) => {
                 console.log('find Banju by id query success');
-                dataValues.content.id = banjuId;
-                resolve(dataValues.content);
+                if (data === null) {
+                    resolve(null);
+                } else {
+                    data.dataValues.content.id = banjuId;
+                    resolve(data.dataValues.content);
+                }
             })
             .catch((err) => {
                 reject(err);
