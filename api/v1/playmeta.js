@@ -20,7 +20,7 @@ router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res
     const resultjson = {};
     // SQL Select query function
     playmetaService.findBanjuByLink(link)
-        .then((content) => {
+        .then(async (content) => {
             // first request about link.
             if (content === null) {
                 searchService.getDuration(link)
