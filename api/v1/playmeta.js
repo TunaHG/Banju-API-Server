@@ -63,10 +63,11 @@ router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res
                 resultjson.content = content;
                 console.log(`Conversion working in ${content.progress}%`);
                 let standardTime = new Date();
-                if (content.startTime < new Date(standardTime.setMinutes(standardTime.getMinutes() - 2)){
-                    await playmetaService.sendToSQS(link);
+                if (content.startTime < new Date(standardTime.setMinutes(standardTime.getMinutes() - 2))) {
+                    const sqsdata = await playmetaService.sendToSQS(link);
                     resultjson = {};
                     resultjson.status = 'restart';
+                    resultjson.data = sqsdata.message;
                 }
                 res.status(200).send(resultjson);
             }
