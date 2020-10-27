@@ -3,6 +3,36 @@ const bodyParser = require('body-parser');
 const config = require('./config/config');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
+var swaggerDefinition = {
+    info: { // API informations (required)
+        title: 'Forte', // Title (required)
+        version: '1.0.1', // Version (required)
+        description: 'forte api server', // Description (optional)
+    },
+    host: 'localhost:3000', // Host (optional)
+    basePath: '/', // Base path (optional)
+    securityDefinitions: {
+        jwt: {
+            type: 'apiKey',
+            name: 'Authorization',
+            in: 'header'
+        }
+    },
+    security: [
+        { jwt: [] }
+    ]
+};
+
+var options = {
+    // Import swaggerDefinitions
+    swaggerDefinition: swaggerDefinition,
+    // Path to the API docs
+    apis: ['./api/v1/*.js'],
+};
+var swaggerSpec = swaggerJSDoc(options);
 
 const playmeta = require('./api/v1/playmeta');
 const user = require('./api/v1/user');
@@ -50,6 +80,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 app.use('/playmeta', playmeta);
 app.use('/user', user);
 app.use('/search', search);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/debug-sentry", function mainHandler(req, res) {
     throw new Error("My first Sentry error!");
