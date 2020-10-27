@@ -52,84 +52,129 @@ exports.sendToSQS = async (link) => {
 };
 
 // DB: Select function using link
-exports.findBanju = async (link) => {
-    const count = await models.Banjus.count({
-        where: {
-            link: link
-        }
-    });
-
-    if (count === 0) {
-        console.log("Not found row about videoId");
-        return 0;
-    }
-
-    const find = await models.Banjus.findOne({
-        attributes: ['content'],
-        where: {
-            is_youtube: true,
-            link: link,
-        },
-    });
-
-    const content = find.content;
-    console.log('SQL Select query Success');
-    return content;
-};
-
-// DB: Update function using link, content (youtube)
-exports.updateBanju = async (link, content) => {
-    const update = await models.Banjus.update(
-        { content: content },
-        {
+exports.findBanjuByLink = (link) => {
+    return new Promise((resolve, reject) => {
+        models.Banjus.findOne({
+            attributes: ['id', 'content'],
             where: {
                 is_youtube: true,
                 link: link,
             },
-        }
-    );
-    console.log('SQL Update query Success');
-    return update;
+        })
+            .then(({ dataValues }) => {
+                console.log('find Banju by link query success');
+                dataValues.content.id = dataValues.id;
+                resolve(dataValues.content);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
+
+exports.findBanjuById = (banjuId) => {
+    return new Promise((resolve, reject) => {
+        models.Banjus.findOne({
+            attributes: ['content'],
+            where: {
+                id: banjuId
+            }
+        })
+            .then(({ dataValues }) => {
+                console.log('find Banju by id query success');
+                dataValues.content.id = banjuId;
+                resolve(dataValues.content);
+            })
+            .catch((err) => {
+                reject(err);
+            })
+    });
+}
+
+// DB: Update function using link, content (youtube)
+exports.updateBanju = (link, content) => {
+    return new Promise((resolve, reject) => {
+        models.Banjus.update(
+            { content: content },
+            {
+                where: {
+                    is_youtube: true,
+                    link: link,
+                },
+            }
+        )
+            .then((data) => {
+                console.log('SQL Update query Success');
+                resolve(data);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
 };
 
 // DB: Delete function using link
-exports.deleteBanju = async (link) => {
-    await models.Banjus.destroy({
-        where: {
-            link: link,
-        },
+exports.deleteBanju = (link) => {
+    return new Promise((resolve, reject) => {
+        models.Banjus.destroy({
+            where: {
+                link: link,
+            },
+        })
+            .then(() => {
+                console.log('SQL Delete query Success');
+                resolve();
+            })
+            .catch((err) => {
+                reject(err);
+            })
     });
-    console.log('SQL Delete query Success');
 };
 
 // DB: Create Banju function developed from the existing Banju
-exports.editBanju = async (id, content) => {
-    const findOriginal = await models.Banjus.findOne({
-        attributes: ['original_banju_id'],
-        where: {
-            id: id,
-        },
+exports.editBanju = (id, content) => {
+    return new Promise((resolve, reject) => {
+        this.findOriginalBanju(id)
+            .then((originalBanjuId) => {
+                if (originalBanjuId === null) {
+                    originalBanjuId = id;
+                }
+
+                models.Banjus.create({
+                    is_youtube: false,
+                    content: content,
+                    parent_banju_id: id,
+                    original_banju_id: originalBanjuId,
+                })
+                    .then((banju) => {
+                        banju.save();
+                        console.log('Edit content save success');
+                        resolve('success');
+                    })
+                    .catch((err) => {
+                        console.log('Edit content save fail');
+                        reject(err);
+                    });
+            })
+            .catch((err) => {
+                reject(err);
+            })
     });
-
-    let originalBanjuId = findOriginal.original_banju_id;
-    if (originalBanjuId == null) {
-        originalBanjuId = id;
-    }
-
-    await models.Banjus.create({
-        is_youtube: false,
-        content: content,
-        parent_banju_id: id,
-        original_banju_id: originalBanjuId,
-    })
-        .then((banju) => {
-            banju.save();
-            console.log('Edit content save success');
-            return 'success';
-        })
-        .catch((err) => {
-            console.log('Edit content save fail');
-            console.log(err);
-            return 'error';
-        });
 };
+
+exports.findOriginalBanju = (banjuId) => {
+    return new Promise((resolve, reject) => {
+        models.Banjus.findOne({
+            attributes: ['original_banju_id'],
+            where: {
+                id: banjuId
+            }
+        })
+            .then(({ dataValues }) => {
+                resolve(dataValues.original_banju_id);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
+}

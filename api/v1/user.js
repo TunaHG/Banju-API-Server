@@ -51,8 +51,6 @@ router.post('/join', (req, res, next) => {
  * Get UserInfo API
  * get user data
  * name, email, banju, practice, ... etc
- *
- * TODO: 세션으로 넘어오는 JWT decode해서 사용
  */
 router.get('/me', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     userService.getUserInfo(req.user.id)
