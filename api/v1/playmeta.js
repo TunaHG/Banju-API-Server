@@ -18,7 +18,6 @@ const router = express.Router();
 router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res, next) => {
     const link = req.params.link;
     const resultjson = {};
-    // TODO: AI Model에서 Error가 발생하여 Row는 남아있는데, Content는 업데이트가 안되는 상황 Handling
     // SQL Select query function
     playmetaService.findBanjuByLink(link)
         .then((content) => {
@@ -107,7 +106,6 @@ router.delete('/', (req, res, next) => {
         .catch(next);
 });
 
-// TODO: Need update edit API (Error handling)
 // Edit Banju content about user customizig banju
 router.post("/edit", passport.authenticate('jwt', { session: false }), (req, res, next) => {
     playmetaService.editBanju(req.body.id, req.body.content)
@@ -117,8 +115,6 @@ router.post("/edit", passport.authenticate('jwt', { session: false }), (req, res
         })
         .catch(next);
 });
-
-// TODO: Edit API (추후, AWS rambda로 보내서 결과를 받아야할 수 있음. -noteLeft, Right등 노트가 떨어지는 위치도 변경해줘야 하기 때문)
 
 router.get('/shared/:banjuId', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     const banjuId = req.params.banjuId;

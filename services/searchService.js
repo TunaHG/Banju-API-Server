@@ -18,7 +18,6 @@ exports.searchDatas = (option) => {
                     tmp.thumbnail = element.snippet.thumbnails.default;
                     await playmetaService.findBanjuByLink(tmp.id)
                         .then((result) => {
-                            // TODO: Banju의 Scale 추가
                             if (result === 0) {
                                 tmp.convert = 'Need Banju';
                             }
