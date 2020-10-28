@@ -7,10 +7,8 @@ const Tracing = require('@sentry/tracing');
 const playmeta = require('./api/v1/playmeta');
 const user = require('./api/v1/user');
 const search = require('./api/v1/search');
+const popular = require('./api/v1/popular');
 
-// Sequelize Setting
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize(config.databaseurl);
 const models = require('./db/models');
 
 const app = express();
@@ -50,17 +48,14 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 app.use('/playmeta', playmeta);
 app.use('/user', user);
 app.use('/search', search);
+app.use('/popular', popular);
 
 app.get("/debug-sentry", function mainHandler(req, res) {
     throw new Error("My first Sentry error!");
 });
 app.use(Sentry.Handlers.errorHandler());
 
-// TODO: Sentry로 sequelize log들 뜨는거 수정해야함
-// Optional fallthrough error handler
 app.use(function onError(err, req, res, next) {
-    // The error id is attached to `res.sentry` to be returned
-    // and optionally displayed to the user for support.
     res.statusCode = 500;
     console.log(err);
     res.send({ message: 'error', error: err.message });
