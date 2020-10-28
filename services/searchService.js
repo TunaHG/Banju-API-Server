@@ -17,11 +17,8 @@ exports.searchDatas = (option) => {
                     tmp.thumbnail = element.snippet.thumbnails.default;
                     await playmetaService.findBanjuByLink(tmp.id)
                         .then((result) => {
-                            if (result === 0) {
+                            if (result === null) {
                                 tmp.convert = 'Need Banju';
-                            }
-                            else if (result === null) {
-                                tmp.convert = 'Banjuing';
                             }
                             else {
                                 tmp.convert = 'Banjued';
