@@ -56,7 +56,6 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 });
 app.use(Sentry.Handlers.errorHandler());
 
-// TODO: Sentry로 sequelize log들 뜨는거 수정해야함
 // Optional fallthrough error handler
 app.use(function onError(err, req, res, next) {
     // The error id is attached to `res.sentry` to be returned
@@ -73,3 +72,5 @@ app.listen(port, (err) => {
     }
     console.log('Server listening on port', port);
 });
+
+module.exports = app;
