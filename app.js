@@ -50,9 +50,6 @@ app.use('/user', user);
 app.use('/search', search);
 app.use('/popular', popular);
 
-app.get("/debug-sentry", function mainHandler(req, res) {
-    throw new Error("My first Sentry error!");
-});
 app.use(Sentry.Handlers.errorHandler());
 
 app.use(function onError(err, req, res, next) {
