@@ -1,6 +1,6 @@
 {
 	"name": "Forte_Server",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "Banju's API Server",
 	"main": "index.js",
 	"scripts": {
