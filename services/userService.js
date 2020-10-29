@@ -85,7 +85,7 @@ exports.kakaologin = (author) => {
                             this.joinUser(kakaoInfo.email)
                                 .then((id) => {
                                     if (id != 'joinerror') {
-                                        const token = jwt.sign({ id: id, iss: 'http://api.dailybanju.com' }, config.jwtsecret);
+                                        const token = jwt.sign({ id: id, auth: 'http://api.dailybanju.com' }, config.jwtsecret);
                                         resolve({ message: 'not user', token });
                                     }
                                     else {
@@ -101,7 +101,7 @@ exports.kakaologin = (author) => {
                             reject();
                         }
                         else {
-                            const token = jwt.sign({ id: userId, iss: 'http://api.dailybanju.com' }, config.jwtsecret);
+                            const token = jwt.sign({ id: userId, auth: 'http://api.dailybanju.com' }, config.jwtsecret);
                             resolve({ message: 'already user', token });
                         }
                     })
@@ -141,7 +141,7 @@ exports.googlelogin = (author) => {
                             this.joinUser(data.email)
                                 .then((id) => {
                                     if (id != 'joinerror') {
-                                        const token = jwt.sign({ id: id, iss: 'http://api.dailybanju.com' }, config.jwtsecret);
+                                        const token = jwt.sign({ id: id, auth: 'http://api.dailybanju.com' }, config.jwtsecret);
                                         resolve({ message: 'not user', token });
                                     }
                                     else {
