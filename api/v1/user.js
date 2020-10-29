@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
 router.post('/join', (req, res, next) => {
     userService.joinUser(req.body.email)
         .then((result) => {
-            const token = jwt.sign({ id: result, iss: 'http://api.dailybanju.com' }, config.jwtsecret);
+            const token = jwt.sign({ id: result, auth: 'http://api.dailybanju.com' }, config.jwtsecret);
             return res.send({ message: 'Success', token });
         })
         .catch(next);
