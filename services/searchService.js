@@ -56,13 +56,14 @@ exports.getDuration = (videoId) => {
         axios.request(option)
             .then(({ data }) => {
                 const items = data.items;
+                const duration = items[0].contentDetails.duration;
                 console.log('Get videoDuration from youtube api');
-                resolve(items[0].contentDetails.duration);
+                resolve(duration);
             })
             .catch((err) => {
                 console.log('error from axios about video contentDetails api');
                 console.log(err.message);
-                resolve('PT0M00S');
+                reject(err);
             });
     });
 };
