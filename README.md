@@ -36,6 +36,10 @@
             - ex) 1, 3, 7, 30, ...etc
         - videoDuration: any, long(>20m), medium(>4m, <20m), short(<4m)
         - pageToken: nextPageToken
+- `/popular`
+    - GET `/` : Get list about popular music from youtube data api
+- `/recommend`
+    - GET `/:scale` : Get list about recommendation data based on the same scale
 
 ## 🔨 How to run  
 ### Using AWS Server
@@ -45,8 +49,8 @@ http://api.dailybanju.com/
 
 ### Docker Execution
 ```bash
-$> docker pull asdf0185/forte_server:v1.0.0
-$> docker run -p 80:3000 asdf0185/forte_server:v1.0.0
+$> docker pull asdf0185/forte_server:v1.0.8
+$> docker run -p 80:3000 asdf0185/forte_server:v1.0.8
 ```  
 
 ### Native Execution  
@@ -76,7 +80,9 @@ $> npm start (or node app.js)
 ├── api                     # API folder
 │   └── v1                  # version 1
 │       ├── playmeta.js     # Client's banju selection request, AI model's banju save request
-│       └── search.js       # Client's banju creation request
+│       ├── search.js       # Client's banju creation request
+│       ├── popular.js      # Client's search popular music list request
+│       ├── recommend.js    # Client's Recommend request
 │       └── user.js         # Client's Login, Join, etc API
 ├── config                  # Configuration folder
 │   ├── config.js           # configuration with dotenv
@@ -91,11 +97,14 @@ $> npm start (or node app.js)
 │       ├── Users.js        # Table of user data
 │       ├── Posts.js        # Table of User's Post data
 │       ├── Comments.js     # Table of User's Comment data
+│       ├── Recommends.js   # Table of Recommend data
 │       └── Follows.js      # Talbe of Follower, Following Relation
 │   └── seeders
 ├── services                # Logic of api
 │   ├── searchService.js    # search music function
 │   ├── playmetaService.js  # find, update banju function
+│   ├── popularService.js   # search popular music function
+│   ├── recommendService.js # recommend another banju function
 │   └── userService.js      # function about user CRUD
 ├── Dockerfile              # Dockerized project
 ├── README.md               # README file
