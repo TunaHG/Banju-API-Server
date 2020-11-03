@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true
         },
         type: Sequelize.STRING,
-        type_id: Sequelize.INTEGER,
+        type_id: Sequelize.UUID,
         content: Sequelize.STRING,
     }, {
         // Table name does not change

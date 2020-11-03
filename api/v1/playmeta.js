@@ -1,6 +1,7 @@
 const express = require("express");
 const playmetaService = require("../../services/playmetaService");
 const searchService = require('../../services/searchService');
+const recommendService = require('../../services/recommendService');
 const Sentry = require('@sentry/node');
 const passport = require('passport');
 
@@ -17,7 +18,7 @@ const router = express.Router();
  */
 router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res, next) => {
     const link = req.params.link;
-    const resultjson = {};
+    let resultjson = {};
     // SQL Select query function
     playmetaService.findBanjuByLink(link)
         .then(async (content) => {
@@ -35,7 +36,7 @@ router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res
                             console.log('Music regist result: ', sqsdata);
                         } else {
                             resultjson.status = 'error';
-                            resultjson.content = { message: 'videoDuration must be 15 or less' };
+                            resultjson.content = { message: 'tooLongDuration' };
                             console.log('Error with videoDuration of 15 or more');
                         }
                         res.status(200).send(resultjson);
@@ -47,6 +48,11 @@ router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res
                 resultjson.content = content;
                 resultjson.status = "finished";
                 console.log("Conversion finish.");
+                recommendService.createRecommend(content)
+                    .then((data) => {
+                        console.log(data);
+                    })
+                    .catch(next);
                 res.status(200).send(resultjson);
             }
             // Conversion Error from AI Model

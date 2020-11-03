@@ -8,6 +8,7 @@ const playmeta = require('./api/v1/playmeta');
 const user = require('./api/v1/user');
 const search = require('./api/v1/search');
 const popular = require('./api/v1/popular');
+const recommend = require('./api/v1/recommend');
 
 const models = require('./db/models');
 
@@ -49,6 +50,7 @@ app.use('/playmeta', playmeta);
 app.use('/user', user);
 app.use('/search', search);
 app.use('/popular', popular);
+app.use('/recommend', recommend);
 
 app.use(Sentry.Handlers.errorHandler());
 

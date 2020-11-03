@@ -5,7 +5,7 @@ const passport = require('passport');
 
 const router = express.Router();
 
-// http://api.dailybanju.com/search/다이너마이트/date/
+// http://api.dailybanju.com/search/다이너마이트
 router.get('/:keyword', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     const keyword = req.params.keyword;
     // order: date, rating, relevance, title, videoCount, viewCount (default: relevance)

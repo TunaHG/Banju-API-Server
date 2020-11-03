@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true
         },
         // practice data (Similar AI Model's Converted Data)
-        user_banju: Sequelize.JSON,
+        user_banju: Sequelize.JSONB,
         // Feedback: Often wrong chord
         hard_chord: Sequelize.STRING,
         // Feedback: Often wrong chord progression
