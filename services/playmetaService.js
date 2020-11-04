@@ -65,6 +65,9 @@ exports.findBanjuByLink = (link) => {
                 console.log('find Banju by link query success');
                 if (data === null) {
                     resolve(null);
+                } else if (data.content === null) {
+                    const content = { status: 'error' };
+                    resolve(content);
                 } else {
                     data.dataValues.content.id = data.dataValues.id;
                     resolve(data.dataValues.content);
@@ -88,6 +91,9 @@ exports.findBanjuById = (banjuId) => {
                 console.log('find Banju by id query success');
                 if (data === null) {
                     resolve(null);
+                } else if (data.content === null) {
+                    const content = { status: 'error' };
+                    resolve(content);
                 } else {
                     data.dataValues.content.id = banjuId;
                     resolve(data.dataValues.content);
