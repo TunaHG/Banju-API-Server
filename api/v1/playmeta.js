@@ -104,8 +104,8 @@ router.post("/", (req, res, next) => {
         .catch(next);
 });
 
-router.delete('/', (req, res, next) => {
-    playmetaService.deleteBanju(req.body.link)
+router.delete('/:link', (req, res, next) => {
+    playmetaService.deleteBanju(req.params.link)
         .then(() => {
             console.log('Banju Delete!');
             res.status(200).send({ message: 'delete success' });

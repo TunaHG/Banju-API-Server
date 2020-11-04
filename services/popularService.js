@@ -8,7 +8,6 @@ exports.searchPopularDatas = (option) => {
                 const items = data.items;
                 let resultjson = {};
                 let result = [];
-                resultjson.nextPageToken = data.nextPageToken;
                 for (const element of items) {
                     let tmp = {};
                     tmp.id = element.id;
@@ -18,10 +17,15 @@ exports.searchPopularDatas = (option) => {
                         .then((result) => {
                             if (result === null) {
                                 tmp.convert = 'Need Banju';
-                            }
-                            else {
-                                tmp.convert = 'Banjued';
-                                tmp.scale = result.meta.scale;
+                            } else if (result.status === 'error') {
+                                tmp.convert = 'error';
+                            } else {
+                                if (result.content.status === 'working') {
+                                    tmp.convert = 'Banjuing';
+                                } else {
+                                    tmp.convert = 'Banjued';
+                                    tmp.scale = result.meta.scale;
+                                }
                             }
                         })
                         .catch((err) => {
