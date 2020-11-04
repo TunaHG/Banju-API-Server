@@ -22,7 +22,7 @@ exports.searchDatas = (option) => {
                             } else if (result.status === 'error') {
                                 tmp.convert = 'error';
                             } else {
-                                if (result.content.status === 'working') {
+                                if (result.status === 'working') {
                                     tmp.convert = 'Banjuing';
                                 } else {
                                     tmp.convert = 'Banjued';
@@ -103,7 +103,7 @@ exports.tempSearchDatas = (keyword) => {
                             } else if (result.status === 'error') {
                                 tmp.convert = 'error';
                             } else {
-                                if (result.content.status === 'working') {
+                                if (result.status === 'working') {
                                     tmp.convert = 'Banjuing';
                                 } else {
                                     tmp.convert = 'Banjued';
