@@ -1,6 +1,7 @@
 const express = require("express");
 const playmetaService = require("../../services/playmetaService");
 const searchService = require('../../services/searchService');
+const recommendService = require('../../services/recommendService');
 const Sentry = require('@sentry/node');
 const passport = require('passport');
 
@@ -55,19 +56,12 @@ const router = express.Router();
  */
 router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res, next) => {
     const link = req.params.link;
-    const resultjson = {};
-    // TODO: AI Model에서 Error가 발생하여 Row는 남아있는데, Content는 업데이트가 안되는 상황 Handling
+    let resultjson = {};
     // SQL Select query function
-    playmetaService.findBanju(link)
-        .then((content) => {
+    playmetaService.findBanjuByLink(link)
+        .then(async (content) => {
+            // first request about link.
             if (content === null) {
-                // TODO: null인 경우가 없지않나 이제?
-                resultjson.status = "working";
-                console.log("Conversion working.");
-                res.status(200).send(resultjson);
-            }
-            // Select Query result have 0 row
-            else if (content === 0) {
                 searchService.getDuration(link)
                     .then(async (videoDuration) => {
                         const checkHour = videoDuration.indexOf('H');
@@ -80,7 +74,7 @@ router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res
                             console.log('Music regist result: ', sqsdata);
                         } else {
                             resultjson.status = 'error';
-                            resultjson.content = { message: 'videoDuration must be 15 or less' };
+                            resultjson.content = { message: 'tooLongDuration' };
                             console.log('Error with videoDuration of 15 or more');
                         }
                         res.status(200).send(resultjson);
@@ -92,6 +86,11 @@ router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res
                 resultjson.content = content;
                 resultjson.status = "finished";
                 console.log("Conversion finish.");
+                recommendService.createRecommend(content)
+                    .then((data) => {
+                        console.log(data);
+                    })
+                    .catch(next);
                 res.status(200).send(resultjson);
             }
             // Conversion Error from AI Model
@@ -107,12 +106,13 @@ router.get("/:link", passport.authenticate('jwt', { session: false }), (req, res
                 resultjson.status = 'working';
                 resultjson.content = content;
                 console.log(`Conversion working in ${content.progress}%`);
-                // let standardTime = new Date();
-                // if (content.startTime < new Date(standardTime.setMinutes(standardTime.getMinutes() - 2)){
-                //     await playmetaService.sendToSQS(link);
-                //     resultjson = {};
-                //     resultjson.status = 'restart';
-                // }
+                let standardTime = new Date();
+                if (content.startTime < new Date(standardTime.setMinutes(standardTime.getMinutes() - 2))) {
+                    const sqsdata = await playmetaService.sendToSQS(link);
+                    resultjson = {};
+                    resultjson.status = 'restart';
+                    resultjson.data = sqsdata.message;
+                }
                 res.status(200).send(resultjson);
             }
         })
@@ -128,7 +128,7 @@ router.post("/", (req, res, next) => {
         .then((update) => {
             console.log("number of row updated: ", update);
             // if update == 0, Means that no row has been updated
-            if (update === 0) {
+            if (update[0] === 0) {
                 console.log("POST /playmeta Failed. there are no updated rows");
                 res.status(200).send({ message: "update fail" });
             }
@@ -142,8 +142,8 @@ router.post("/", (req, res, next) => {
         .catch(next);
 });
 
-router.delete('/', (req, res, next) => {
-    playmetaService.deleteBanju(req.body.link)
+router.delete('/:link', (req, res, next) => {
+    playmetaService.deleteBanju(req.params.link)
         .then(() => {
             console.log('Banju Delete!');
             res.status(200).send({ message: 'delete success' });
@@ -151,16 +151,34 @@ router.delete('/', (req, res, next) => {
         .catch(next);
 });
 
-// TODO: Need update edit API (Error handling)
 // Edit Banju content about user customizig banju
 router.post("/edit", passport.authenticate('jwt', { session: false }), (req, res, next) => {
     playmetaService.editBanju(req.body.id, req.body.content)
         .then((data) => {
+            console.log('edit banju api is working');
             res.status(200).send({ message: data });
         })
         .catch(next);
 });
 
-// TODO: Edit API (추후, AWS rambda로 보내서 결과를 받아야할 수 있음. -noteLeft, Right등 노트가 떨어지는 위치도 변경해줘야 하기 때문)
+router.get('/shared/:banjuId', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    const banjuId = req.params.banjuId;
+    playmetaService.findBanjuById(banjuId)
+        .then((content) => {
+            console.log('shared banju using id api is working');
+            res.status(200).send(content);
+        })
+        .catch(next);
+});
+
+router.get('/original/:banjuId', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    const banjuId = req.params.banjuId;
+    playmetaService.findOriginalBanju(banjuId)
+        .then((data) => {
+            console.log('find original banju api is working');
+            res.status(200).send(data);
+        })
+        .catch(next);
+});
 
 module.exports = router;

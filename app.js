@@ -3,44 +3,13 @@ const bodyParser = require('body-parser');
 const config = require('./config/config');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
-const swaggerJSDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
-
-var swaggerDefinition = {
-    info: { // API informations (required)
-        title: 'Forte', // Title (required)
-        version: '1.0.1', // Version (required)
-        description: 'forte api server', // Description (optional)
-    },
-    host: 'localhost:3000', // Host (optional)
-    basePath: '/', // Base path (optional)
-    securityDefinitions: {
-        jwt: {
-            type: 'apiKey',
-            name: 'Authorization',
-            in: 'header'
-        }
-    },
-    security: [
-        { jwt: [] }
-    ]
-};
-
-var options = {
-    // Import swaggerDefinitions
-    swaggerDefinition: swaggerDefinition,
-    // Path to the API docs
-    apis: ['./api/v1/*.js'],
-};
-var swaggerSpec = swaggerJSDoc(options);
 
 const playmeta = require('./api/v1/playmeta');
 const user = require('./api/v1/user');
 const search = require('./api/v1/search');
+const popular = require('./api/v1/popular');
+const recommend = require('./api/v1/recommend');
 
-// Sequelize Setting
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize(config.databaseurl);
 const models = require('./db/models');
 
 const app = express();
@@ -80,18 +49,12 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 app.use('/playmeta', playmeta);
 app.use('/user', user);
 app.use('/search', search);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/popular', popular);
+app.use('/recommend', recommend);
 
-app.get("/debug-sentry", function mainHandler(req, res) {
-    throw new Error("My first Sentry error!");
-});
 app.use(Sentry.Handlers.errorHandler());
 
-// TODO: Sentry로 sequelize log들 뜨는거 수정해야함
-// Optional fallthrough error handler
 app.use(function onError(err, req, res, next) {
-    // The error id is attached to `res.sentry` to be returned
-    // and optionally displayed to the user for support.
     res.statusCode = 500;
     console.log(err);
     res.send({ message: 'error', error: err.message });

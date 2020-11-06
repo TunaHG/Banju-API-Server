@@ -19,11 +19,11 @@ module.exports = (sequelize, Sequelize) => {
             unique: true
         },
         // Converted Data from AI Model
-        content: Sequelize.JSON,
+        content: Sequelize.JSONB,
         // this id derived from parent id
-        parent_banju_id: Sequelize.INTEGER,
+        parent_banju_id: Sequelize.UUID,
         // this banju's original id (AI model's )
-        original_banju_id: Sequelize.INTEGER,
+        original_banju_id: Sequelize.UUID,
         included_chord: Sequelize.STRING,
         // Often Wrong Chord
         hard_chord: Sequelize.STRING,

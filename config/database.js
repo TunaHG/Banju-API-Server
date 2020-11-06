@@ -4,7 +4,7 @@ module.exports = {
   "development": {
     "username": process.env.DB_USERNAME,
     "password": process.env.DB_PASSWORD,
-    "database": "forte",
+    "database": "postgres",
     "host": "forte-test.cethaknrgb68.ap-northeast-2.rds.amazonaws.com",
     "dialect": "postgres",
     "logging": false
