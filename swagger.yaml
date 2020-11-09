@@ -1,0 +1,297 @@
+---
+openapi: 3.0.0
+info:
+  title: Banju_API
+  description: Banju Project with SWmaestro Team Forte
+  contact:
+    email: smw11.forte@gmail.com
+  version: 1.0.4
+servers:
+- url: https://virtserver.swaggerhub.com/for3/Banju/1.0.4
+  description: SwaggerHub API Auto Mocking
+- url: http://api.dailybanju.com
+  description: Banju API Server in AWS EC2
+tags:
+- name: playmeta
+  description: Everything about Banju data
+- name: search
+  description: Search Data from youtube data API
+- name: user
+  description: Operation about user
+paths:
+  /playmeta/{link}:
+    get:
+      tags:
+      - playmeta
+      summary: Get a banju data from youtube link
+      parameters:
+      - name: link
+        in: path
+        description: Youtube videoId
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Get Banju data
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+  /playmeta:
+    post:
+      tags:
+      - playmeta
+      summary: Update a banju data in DB
+      requestBody:
+        description: from AI model
+        content:
+          application:json:
+            schema:
+              $ref: '#/components/schemas/UpdateBanju'
+        required: true
+      responses:
+        "200":
+          description: Get message about function result
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+      - playmeta
+      summary: Delete a row in Banju Table
+      responses:
+        "200":
+          description: Delete Success
+          content:
+            application/json:
+              schema:
+                type: string
+  /playmeta/edit:
+    post:
+      tags:
+      - playmeta
+      summary: Edit Banju data
+      requestBody:
+        description: Edit Banju data in banju id's content
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditBanju'
+        required: true
+      responses:
+        "200":
+          description: Edit Success
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+  /playmeta/shaed/{banjuId}:
+    get:
+      tags:
+      - playmeta
+      summary: Get Banju data using shared banjuId
+      parameters:
+      - name: banjuId
+        in: path
+        description: Youtube videoId
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Get Banju data
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+  /playmeta/original/{banjuId}:
+    get:
+      tags:
+      - playmeta
+      summary: Get Original banjuId using banjuId
+      parameters:
+      - name: banjuId
+        in: path
+        description: Youtube videoId
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Original banjuId
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+  /search/{keyword}:
+    get:
+      tags:
+      - search
+      summary: Get searched data
+      parameters:
+      - name: keyword
+        in: path
+        description: search keyword
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: order
+        in: query
+        description: date, rating, relevance, title, videoCoutn, viewCount
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: publishedAfter
+        in: query
+        description: some day before you want to filtering
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: videoDuration
+        in: query
+        description: any, long(>20m), medium(>4m, <20m), short(<4m)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: pageToken
+        in: query
+        description: next pageToken
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Search success
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+  /user:
+    post:
+      tags:
+      - user
+      summary: Social login
+      requestBody:
+        description: type, accessToken
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Social'
+        required: true
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                type: string
+  /user/join:
+    post:
+      tags:
+      - user
+      summary: Join user
+      requestBody:
+        description: User email
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: Join Success
+          content:
+            application/json:
+              schema:
+                type: string
+  /user/me:
+    get:
+      tags:
+      - user
+      summary: Get userInfo
+      responses:
+        "200":
+          description: get userInfo
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    UpdateBanju:
+      title: Banju data we want to update using youtube videoId
+      required:
+      - content
+      - link
+      type: object
+      properties:
+        link:
+          type: string
+          description: Youtube videoId
+        content:
+          type: string
+          description: Banju data
+    EditBanju:
+      title: Banju data we want to edit using banjuId
+      required:
+      - content
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: BanjuId
+        content:
+          type: string
+          description: Banju data
+    Social:
+      title: Social login
+      required:
+      - accessToken
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: kakao, google, apple available
+        accessToken:
+          type: string
+          description: each platform's accessToken
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

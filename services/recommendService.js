@@ -13,7 +13,7 @@ exports.recommendBanju = (scale) => {
         })
             .then((data) => {
                 console.log('recommend banju query success');
-                const sample = _.sample(data, 4);
+                const sample = _.sample(data, 8);
                 let result = [];
                 for (const element of sample) {
                     let item = element.dataValues;

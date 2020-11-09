@@ -6,45 +6,6 @@ const Sentry = require('@sentry/node');
 const passport = require('passport');
 
 const router = express.Router();
-/**
- * @swagger
- * tags:
- *   name: Playmeta
- *   description: Banju management
- * definitions:
- *   Playmeta:
- *     type: object
- *     required:
- *       - link
- *     properties:
- *       _id:
- *         type: string
- *         description: ObjectID
- *       content:
- *         type: string
- *         description: 할일 내용
- *       done:
- *         type: boolean
- *         description: 완료 여부
- */
-
-/**
- * @swagger
- * /playmeta:
- *   get:
- *     summary: Returns Banju
- *     tags: [Playmeta]
- *     responses:
- *       200:
- *         description: todo list
- *         schema:
- *           type: object
- *           properties:
- *             todos:
- *               type: array
- *               items:
- *                 $ref: '#/definitions/Todo'
- */
 /*
  * Create, Find banju data's status API
  * GET /playmeta/:link
