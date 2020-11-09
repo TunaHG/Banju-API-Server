@@ -54,7 +54,7 @@ app.use('/user', user);
 app.use('/search', search);
 app.use('/popular', popular);
 app.use('/recommend', recommend);
-app.use('/api-docs', swaggerUI.server, swaggerUI.setup(swaggerDocument));
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.use(Sentry.Handlers.errorHandler());
 
