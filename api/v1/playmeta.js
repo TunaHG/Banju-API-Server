@@ -6,7 +6,6 @@ const Sentry = require('@sentry/node');
 const passport = require('passport');
 
 const router = express.Router();
-
 /*
  * Create, Find banju data's status API
  * GET /playmeta/:link

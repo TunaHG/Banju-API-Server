@@ -1,6 +1,6 @@
 {
 	"name": "Forte_Server",
-	"version": "1.0.14",
+	"version": "1.0.15",
 	"description": "Banju's API Server",
 	"main": "index.js",
 	"scripts": {
@@ -38,6 +38,8 @@
 		"eslint-plugin-import": "^2.22.1",
 		"eslint-plugin-prettier": "^3.1.4",
 		"prettier": "2.1.2",
-		"sequelize-cli": "^6.2.0"
+		"sequelize-cli": "^6.2.0",
+		"swagger-jsdoc": "^4.3.1",
+		"swagger-ui-express": "^4.1.4"
 	}
 }
