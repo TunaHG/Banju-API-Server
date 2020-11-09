@@ -1,6 +1,10 @@
 {
 	"name": "Forte_Server",
+<<<<<<< HEAD
 	"version": "1.0.15",
+=======
+	"version": "1.0.16",
+>>>>>>> release-1.0.16
 	"description": "Banju's API Server",
 	"main": "index.js",
 	"scripts": {
@@ -29,7 +33,8 @@
 		"pg-hstore": "^2.3.3",
 		"querystring": "^0.2.0",
 		"request": "^2.88.2",
-		"sequelize": "^6.3.4"
+		"sequelize": "^6.3.4",
+		"yamljs": "^0.3.0"
 	},
 	"devDependencies": {
 		"eslint": "^7.11.0",
