@@ -3,6 +3,9 @@ const bodyParser = require('body-parser');
 const config = require('./config/config');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
+const swaggerUI = require('swagger-ui-express');
+const yaml = require('yamljs');
+const swaggerDocument = yaml.load('./swagger.yaml');
 
 const playmeta = require('./api/v1/playmeta');
 const user = require('./api/v1/user');
@@ -51,6 +54,7 @@ app.use('/user', user);
 app.use('/search', search);
 app.use('/popular', popular);
 app.use('/recommend', recommend);
+app.use('/api-docs', swaggerUI.server, swaggerUI.setup(swaggerDocument));
 
 app.use(Sentry.Handlers.errorHandler());
 
