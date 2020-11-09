@@ -40,6 +40,8 @@
     - GET `/` : Get list about popular music from youtube data api
 - `/recommend`
     - GET `/:scale` : Get list about recommendation data based on the same scale
+- `/api-docs`
+    - API Docs
 
 ## 🔨 How to run  
 ### Using AWS Server
@@ -49,8 +51,8 @@ http://api.dailybanju.com/
 
 ### Docker Execution
 ```bash
-$> docker pull asdf0185/forte_server:v1.0.8
-$> docker run -p 80:3000 asdf0185/forte_server:v1.0.8
+$> docker pull asdf0185/forte_server:v1.0.16
+$> docker run -p 80:3000 asdf0185/forte_server:v1.0.16
 ```  
 
 ### Native Execution  
@@ -113,6 +115,7 @@ $> npm start (or node app.js)
 ├── .sequelizerc.json       # Sequelize Setting
 ├── .gitignore              # Git Ignore Setting
 ├── .dockerignore           # Docker Ignore Setting
+├── swagger.yaml            # api-docs Setting
 ├── package.json
 ├── package-lock.json
 └── app.js
