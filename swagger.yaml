@@ -4,10 +4,8 @@ info:
   description: Banju Project with SWmaestro Team Forte
   contact:
     email: smw11.forte@gmail.com
-  version: 1.0.4
+  version: 1.0.17
 servers:
-- url: https://virtserver.swaggerhub.com/for3/Banju/1.0.4
-  description: SwaggerHub API Auto Mocking
 - url: http://api.dailybanju.com
   description: Banju API Server in AWS EC2
 tags:
@@ -17,6 +15,10 @@ tags:
   description: Search Data from youtube data API
 - name: user
   description: Operation about user
+- name: popular
+  description: Operation about popular music using Youtube data api
+- name: recommend
+  description: Operation about recommend banju
 paths:
   /playmeta/{link}:
     get:
@@ -41,6 +43,24 @@ paths:
                 type: string
       security:
       - bearerAuth: []
+    delete:
+      tags:
+      - playmeta
+      summary: Delete a row in Banju Table
+      parameters:
+        - name: link
+          in: path
+          description: Youtube videoId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Delete Success
+          content:
+            application/json:
+              schema:
+                type: string
   /playmeta:
     post:
       tags:
@@ -51,22 +71,16 @@ paths:
         content:
           application:json:
             schema:
-              $ref: '#/components/schemas/UpdateBanju'
+              type: object
+              properties:
+                link:
+                  type: string
+                content:
+                  type: string
         required: true
       responses:
         "200":
           description: Get message about function result
-          content:
-            application/json:
-              schema:
-                type: string
-    delete:
-      tags:
-      - playmeta
-      summary: Delete a row in Banju Table
-      responses:
-        "200":
-          description: Delete Success
           content:
             application/json:
               schema:
@@ -81,7 +95,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EditBanju'
+              type: object
+              properties:
+                id:
+                  type: string
+                content:
+                  type: string
         required: true
       responses:
         "200":
@@ -92,7 +111,7 @@ paths:
                 type: string
       security:
       - bearerAuth: []
-  /playmeta/shaed/{banjuId}:
+  /playmeta/shared/{banjuId}:
     get:
       tags:
       - playmeta
@@ -203,7 +222,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Social'
+              type: object
+              properties:
+                type:
+                  type: string
+                accessToken:
+                  type: string
         required: true
       responses:
         "200":
@@ -248,47 +272,35 @@ paths:
                 type: string
       security:
       - bearerAuth: []
+  /popular:
+    get:
+      tags:
+        - popular
+      summary: Get popular music
+      responses:
+        "200":
+          description: Get popular music success
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearerAuth: []
+  /recommend/{scale}:
+    get:
+      tags:
+        - recommend
+      summary: Get recommend banju
+      responses:
+        "200":
+          description: Get 8 recommend banju success
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearerAuth: []
 components:
-  schemas:
-    UpdateBanju:
-      title: Banju data we want to update using youtube videoId
-      required:
-      - content
-      - link
-      type: object
-      properties:
-        link:
-          type: string
-          description: Youtube videoId
-        content:
-          type: string
-          description: Banju data
-    EditBanju:
-      title: Banju data we want to edit using banjuId
-      required:
-      - content
-      - id
-      type: object
-      properties:
-        id:
-          type: string
-          description: BanjuId
-        content:
-          type: string
-          description: Banju data
-    Social:
-      title: Social login
-      required:
-      - accessToken
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-          description: kakao, google, apple available
-        accessToken:
-          type: string
-          description: each platform's accessToken
   securitySchemes:
     bearerAuth:
       type: http
