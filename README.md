@@ -4,6 +4,8 @@
 
 **Software Maestro 11기 TEAM forte 🎼김성환 유인성 김하균**
 
+![image](/uploads/90eafee2276cbd9aede0e5fbb496e626/image.png)
+
 ## 🔎 Features in Backend Server
 - Client's Banju data creation request
 - Client's Banju data get from db request
